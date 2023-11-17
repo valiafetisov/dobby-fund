@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  app:
+    restart: unless-stopped
+    expose:
+      - 3000
+    build:
+      context: ./app
+
+  reverse-proxy:
+    restart: unless-stopped
+    image: staticfloat/nginx-certbot
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    environment:
+      - CERTBOT_EMAIL=$CERTBOT_EMAIL
+      - CERTBOT_DOMAIN=app.dobby.fund
+      - ENVSUBST_VARS=CERTBOT_DOMAIN
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - ./nginx.conf:/etc/nginx/user.conf.d/nginx.conf:ro
+    depends_on:
+      - app
+
+volumes:
+  letsencrypt:
