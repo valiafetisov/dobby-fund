@@ -7,7 +7,7 @@ upload:
 	rsync -av . '$(SERVER):$(FOLDER)' --exclude='.git' --exclude='node_modules' --exclude='.output' --exclude='.nuxt' --delete
 
 server-start:
-	ssh $(SERVER) 'cd $(FOLDER) && docker compose up --build --force-recreate --timeout 600 -d'
+	ssh $(SERVER) 'cd $(FOLDER) && docker compose up --build --force-recreate -d'
 
 server-logs:
 	ssh $(SERVER) 'cd $(FOLDER) && docker compose logs -f'
