@@ -60,12 +60,13 @@ const generateWallet = async () => {
         <n-button disabled>Use existing private key</n-button>
         <n-button disabled>Restore from preseved</n-button>
       </div>
-      <div class="flex gap-2">
-        <span>Wallet address: </span>
-        <div v-if="isCreating">
-          <n-spin size="small" class="mr-2" />Creating new wallet
-        </div>
-        <span v-else>{{ publicAddress ?? 'Not yet created' }}</span>
+      <div class="flex">
+        <span>Wallet address:&nbsp;</span>
+        <span v-if="isCreating" class="text-neutral-400">
+          Creating new wallet...
+        </span>
+        <span v-else-if="!publicAddress" class="text-neutral-400">Not yet created</span>
+        <span v-else>{{ publicAddress }}</span>
       </div>
     </div>
   </n-collapse-item>
