@@ -13,6 +13,7 @@ contract DobbyFund {
 
     // Supported token
     ERC20 public immutable token;
+    address public immutable donation;
     
     // Time window in seconds in which tokens are claimable after the claimableDate
     uint40 public immutable claimableWindow;
@@ -39,8 +40,11 @@ contract DobbyFund {
     function withdraw() external {
         require(deposits[msg.sender].length > 0, 'no deposits');
         for (uint i = 0; i < deposits[msg.sender].length; i++) {
-            require(deposits[msg.sender][i].claimableDate > block.timestamp);
-            require(block.timestamp < deposits[msg.sender][i].claimableDate + claimableWindow);
+            if (
+                deposits[msg.sender][i].claimableDate < block.timestamp
+            ) {
+                continue;
+            }
             uint256 amountToTransfer = deposits[msg.sender][i].amount;
             delete deposits[msg.sender][i];
             token.transfer(msg.sender, amountToTransfer);
