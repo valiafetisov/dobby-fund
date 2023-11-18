@@ -30,8 +30,8 @@ const generateWallet = async () => {
   await new Promise(() => {
     setTimeout(() => {
       isCreating.value = false;
-      emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
     }, 3000);
+    emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
   });
 };
 </script>
