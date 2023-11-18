@@ -1,61 +1,43 @@
-// This is a script for deploying your contracts. You can adapt it to deploy
-// yours, or create new ones.
+const tokenAddress = '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
+const donationDestination = '0x53Dc0c92380cce50e0C3D9DF625478C3d4069bf3';
+const uniswapRouter = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 
-const path = require("path");
+async function deploy() {
+    // This is just a convenience check
+    if (network.name === 'hardhat') {
+        console.warn(
+            'You are trying to deploy a contract to the Hardhat Network, which' +
+                'gets automatically created and destroyed every time. Use the Hardhat' +
+                " option '--network localhost'"
+        );
+    }
 
-async function main() {
-  // This is just a convenience check
-  if (network.name === "hardhat") {
-    console.warn(
-      "You are trying to deploy a contract to the Hardhat Network, which" +
-        "gets automatically created and destroyed every time. Use the Hardhat" +
-        " option '--network localhost'"
-    );
-  }
+    // ethers is available in the global scope
+    const [deployer] = await ethers.getSigners();
+    console.log('Deploying the contracts with the account:', await deployer.getAddress());
 
-  // ethers is available in the global scope
-  const [deployer] = await ethers.getSigners();
-  console.log(
-    "Deploying the contracts with the account:",
-    await deployer.getAddress()
-  );
+    console.log('Account balance:', (await deployer.getBalance()).toString());
 
-  console.log("Account balance:", (await deployer.getBalance()).toString());
+    const DobbyFund = await ethers.getContractFactory('DobbyFund');
+    const protocol = await DobbyFund.deploy(tokenAddress, donationDestination, uniswapRouter);
+    await protocol.deployed();
 
-  const Token = await ethers.getContractFactory("Token");
-  const token = await Token.deploy();
-  await token.deployed();
-
-  console.log("Token address:", token.address);
-
-  // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(token);
+    console.log('Deployed protocol address:', protocol.address);
+    return protocol;
 }
 
-function saveFrontendFiles(token) {
-  const fs = require("fs");
-  const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts");
-
-  if (!fs.existsSync(contractsDir)) {
-    fs.mkdirSync(contractsDir);
-  }
-
-  fs.writeFileSync(
-    path.join(contractsDir, "contract-address.json"),
-    JSON.stringify({ Token: token.address }, undefined, 2)
-  );
-
-  const TokenArtifact = artifacts.readArtifactSync("Token");
-
-  fs.writeFileSync(
-    path.join(contractsDir, "Token.json"),
-    JSON.stringify(TokenArtifact, null, 2)
-  );
+if (require.main === module) {
+    deploy()
+        .then(() => process.exit(0))
+        .catch(error => {
+            console.error(error);
+            process.exit(1);
+        });
 }
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+module.exports = {
+    deploy,
+    tokenAddress,
+    donationDestination,
+    uniswapRouter,
+};
