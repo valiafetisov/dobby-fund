@@ -16,7 +16,7 @@ const themeConfig: ThemeConfig = {
 </script>
 
 <template>
-  <naive-config :theme-config="themeConfig">
+  <naive-config :theme-config="themeConfig" class="bg-neutral-100">
     <NNotificationProvider placement="top">
       <NuxtLayout name="default">
         <NuxtPage />
