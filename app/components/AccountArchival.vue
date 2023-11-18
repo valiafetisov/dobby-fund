@@ -15,9 +15,9 @@ const emits = defineEmits<{
   (e: 'updateConfirmed', isConfirmed: boolean): void
 }>()
 
-const archivedPartsCount = ref(0)
-const archivedPartsThreshold = ref(0)
-const downloadParts: Ref<{ index: number; downloadedAt: number | null }[]> = ref([])
+const archivedPartsCount = ref(1)
+const archivedPartsThreshold = ref(1)
+const downloadParts: Ref<{ index: number; downloadedAt: number | null }[]> = ref([{ index: 0, downloadedAt: null }])
 const currentIndexToGenerate: Ref<number | null> = ref(null)
 const isGenerating = ref(false)
 
@@ -77,7 +77,7 @@ const generatePdf = async (index: number) => {
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <div v-for="{ index, downloadedAt } of downloadParts" :key="index" class="flex gap-x-2">
+        <div v-for="{ index, downloadedAt } of downloadParts" :key="index" class="flex gap-x-2 items-center">
           <n-button
             :type="downloadedAt ? 'default' : 'primary'"
             :loading="isGenerating && index === currentIndexToGenerate"
