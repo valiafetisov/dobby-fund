@@ -1,36 +1,37 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 
+const currentlySelectedStep = ref('setup')
 const accountPrivateKey = ref('')
 const accountAddress = ref('')
 const accountGenerationDate: Ref<Date | null> = ref(null)
-const collapseToExpand = ref('setup')
+const wasAccountArchived = ref(false)
 
 const getCreatedWallet = (address: string, privateKey: string, generationDate: Date) => {
   accountAddress.value = address
   accountPrivateKey.value = privateKey
   accountGenerationDate.value = generationDate
-  collapseToExpand.value = 'archive'
+  currentlySelectedStep.value = 'archive'
 }
 
-const updateConfirmed = () => {
-  collapseToExpand.value = 'buy'
-  console.log('updateConfirmed')
+const updateConfirmed = (isConfirmed: boolean) => {
+  currentlySelectedStep.value = 'buy'
+  wasAccountArchived.value = isConfirmed
 }
 </script>
 
 <template>
   <div class="flex items-center justify-center">
     <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
-      <n-collapse arrow-placement="right" display-directive="show" :expanded-names="collapseToExpand" accordion>
-        <AccountSetup @get-created-wallet="getCreatedWallet" @click="collapseToExpand = 'setup'" />
+      <n-collapse arrow-placement="right" display-directive="show" :expanded-names="currentlySelectedStep" accordion>
+        <AccountSetup @get-created-wallet="getCreatedWallet" @click="currentlySelectedStep = 'setup'" />
         <AccountArchival
           :accountGenerationDate="accountGenerationDate"
           :accountPrivateKey="accountPrivateKey"
           @updateConfirmed="updateConfirmed"
-          @click="collapseToExpand = 'archive'"
+          @click="currentlySelectedStep = 'archive'"
         />
-        <CryptoBuy :accountAddress="accountAddress" @click="collapseToExpand = 'buy'" />
+        <CryptoBuy :accountAddress="wasAccountArchived ? accountAddress : undefined" @click="currentlySelectedStep = 'buy'" />
       </n-collapse>
     </div>
   </div>

@@ -6,9 +6,9 @@ import { format } from 'date-fns'
 import { GateFiSDK } from '@gatefi/js-sdk'
 
 const props = defineProps<{
-  accountAddress: string | undefined
-  currentBalance: number | undefined
-  currentBalanceLastCheckedAt: Date | undefined
+  accountAddress?: string;
+  currentBalance?: number;
+  currentBalanceLastCheckedAt?: Date;
 }>()
 
 const emits = defineEmits<{

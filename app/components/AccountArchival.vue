@@ -120,6 +120,14 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
         </div>
       </div>
       <div class="flex flex-col gap-2">
+        <div v-if="!downloadParts?.length" class="flex flex-col gap-2">
+          <div v-for="index in archivedPartsCount" class="flex gap-x-12">
+            <n-button secondary disabled class="flex-1 flex-shrink-0">
+              Download shared secret {{ index }} / {{ archivedPartsCount }}
+            </n-button>
+            <div class="flex-1 flex-shrink-0"></div>
+          </div>
+        </div>
         <div v-for="{ index, sharedSecret, downloadedAt } of downloadParts" :key="index" class="flex gap-x-5 items-center">
           <a :href="generateTextFile(sharedSecret)" download class="block flex-1">
             <n-button
