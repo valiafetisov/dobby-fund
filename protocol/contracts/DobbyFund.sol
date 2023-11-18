@@ -3,20 +3,30 @@ pragma solidity 0.8.16;
 
 import "hardhat/console.sol";
 
-interface ERC20 {
+interface Erc20Like {
     function approve(address, uint256) external;
     function transferFrom(address, address, uint256) external;
     function balanceOf(address) external view returns (uint256);
 }
 
+interface UniswapRouterLike {
+    function WETH() external view returns (address);
+    function swapExactETHForTokens(uint256 amountOutMin, address[] memory path, address to, uint256 deadline)
+        external
+        payable
+        returns (uint256[] memory amounts);
+}
+
 contract DobbyFund {
 
     // Supported token
-    ERC20 public immutable token;
+    Erc20Like public immutable token;
     // Time window in seconds in which tokens are claimable after the claimableDate
     uint40 public constant claimableWindow = 10 * 365 days;
     // If unclaimed after claimableDate + claimableWindow, funds can be transferred to donationDestination
     address public immutable donationDestination;
+    // Exchange router
+    UniswapRouterLike public immutable router;
 
     // Deposits
     struct Deposit {
@@ -26,14 +36,24 @@ contract DobbyFund {
     mapping(address => Deposit[]) public deposits;
     event Deposited(address indexed receiver, uint40 indexed claimableDate, uint256 amount);
 
-    constructor(address token_, address donationDestination_) {
-        token = ERC20(token_);
+    constructor(address token_, address donationDestination_, address router_) {
+        token = Erc20Like(token_);
         donationDestination = donationDestination_;
+        router = UniswapRouterLike(router_);
     }
 
-    function deposit(address receiver, uint256 amount, uint40 claimableDate) external {
+    function deposit(address receiver, uint40 claimableDate, uint256 amount) external {
         token.transferFrom(msg.sender, address(this), amount);
         deposits[receiver].push(Deposit(claimableDate, amount));
+    }
+
+    function depositEth(address receiver, uint40 claimableDate) external payable returns (uint256) {
+        address[] memory path = new address[](2);
+        path[0] = router.WETH();
+        path[1] = address(token);
+        uint256[] memory amounts = router.swapExactETHForTokens{ value: msg.value }(0, path, address(this), block.timestamp + 15);
+        deposits[receiver].push(Deposit(claimableDate, amounts[1]));
+        return amounts[1];
     }
 
     function withdraw() external {

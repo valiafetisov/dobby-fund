@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const { loadFixture, time } = require('@nomicfoundation/hardhat-network-helpers');
-const { tokenAddress, donationDestination } = require('../scripts/deploy');
+const { tokenAddress, donationDestination, uniswapRouter } = require('../scripts/deploy');
 
 const claimableWindow = 10 * 365 * 24 * 60 * 60;
 
@@ -18,7 +18,7 @@ describe('Token contract', function () {
     async function deployProtocolFixture() {
         const DobbyFund = await ethers.getContractFactory('DobbyFund');
         const [deployer, alice, bob] = await ethers.getSigners();
-        const protocol = await DobbyFund.deploy(tokenAddress, donationDestination);
+        const protocol = await DobbyFund.deploy(tokenAddress, donationDestination, uniswapRouter);
         await protocol.deployed();
         const token = new ethers.Contract(
             tokenAddress,
@@ -52,12 +52,12 @@ describe('Token contract', function () {
             // deposit
             const deadline = Math.floor(Date.now() / 1000) + 100;
             await token.approve(protocol.address, totalBalance / 2);
-            await protocol.deposit(deployer.address, totalBalance / 2, deadline);
+            await protocol.deposit(deployer.address, deadline, totalBalance / 2);
             expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance / 2);
 
             // deposit again
             await token.approve(protocol.address, totalBalance / 2);
-            await protocol.deposit(deployer.address, totalBalance / 2, deadline + 100);
+            await protocol.deposit(deployer.address, deadline + 100, totalBalance / 2);
             expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
             expect(await token.balanceOf(deployer.address)).to.equal(0);
         });
@@ -73,7 +73,7 @@ describe('Token contract', function () {
             // deposit
             const deadline = Math.floor(Date.now() / 1000) + 1000;
             await token.approve(protocol.address, totalBalance);
-            await protocol.deposit(deployer.address, totalBalance, deadline);
+            await protocol.deposit(deployer.address, deadline, totalBalance);
             expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
             expect(await token.balanceOf(deployer.address)).to.equal(0);
 
@@ -102,7 +102,7 @@ describe('Token contract', function () {
             // deposit
             const deadline = Math.floor(Date.now() / 1000) + 1000;
             await token.approve(protocol.address, totalBalance);
-            await protocol.deposit(alice.address, totalBalance, deadline);
+            await protocol.deposit(alice.address, deadline, totalBalance);
             expect(await token.balanceOf(deployer.address)).to.equal(0);
             expect(await protocol.balanceOf(alice.address)).to.equal(totalBalance);
 
@@ -120,6 +120,29 @@ describe('Token contract', function () {
         });
     });
 
+    describe('Deposits pure ETH', function () {
+        it('Deployer locks ETH for sDAI', async function () {
+            const { token, protocol, deployer } = await loadFixture(deployProtocolFixture);
+            const deadline = Math.floor(Date.now() / 1000) + 1000;
+            const inputAmountOfEth = ethers.utils.parseEther('1.0');
+            const expectedAmountOfSdai = await protocol.callStatic.depositEth(deployer.address, deadline, {
+                value: inputAmountOfEth,
+            });
+
+            // deposits and exchanges
+            await protocol.depositEth(deployer.address, deadline, { value: inputAmountOfEth });
+            const sdaiBalance = await protocol.balanceOf(deployer.address);
+            expect(sdaiBalance).to.be.above(expectedAmountOfSdai.sub(1000));
+            expect(await token.balanceOf(protocol.address)).to.be.above(expectedAmountOfSdai.sub(1000));
+
+            // withdraws after deadilne
+            await time.increaseTo(deadline + 1);
+            await protocol.withdraw();
+            expect(await protocol.balanceOf(deployer.address)).to.equal(0);
+            expect(await token.balanceOf(deployer.address)).to.equal(sdaiBalance);
+        });
+    });
+
     describe('Donation strategy', function () {
         it('Deployer locks money, bob tiggers donation', async function () {
             const { token, protocol, deployer, bob } = await loadFixture(deployProtocolFixture);
@@ -133,7 +156,7 @@ describe('Token contract', function () {
             // deposit
             const deadline = Math.floor(Date.now() / 1000) + 1000;
             await token.approve(protocol.address, totalBalance);
-            await protocol.deposit(deployer.address, totalBalance, deadline);
+            await protocol.deposit(deployer.address, deadline, totalBalance);
             expect(await token.balanceOf(deployer.address)).to.equal(0);
             expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
 

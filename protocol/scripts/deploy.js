@@ -1,5 +1,6 @@
 const tokenAddress = '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
 const donationDestination = '0x53Dc0c92380cce50e0C3D9DF625478C3d4069bf3';
+const uniswapRouter = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 
 async function deploy() {
     // This is just a convenience check
@@ -18,7 +19,7 @@ async function deploy() {
     console.log('Account balance:', (await deployer.getBalance()).toString());
 
     const DobbyFund = await ethers.getContractFactory('DobbyFund');
-    const protocol = await DobbyFund.deploy(tokenAddress, donationDestination);
+    const protocol = await DobbyFund.deploy(tokenAddress, donationDestination, uniswapRouter);
     await protocol.deployed();
 
     console.log('Deployed protocol address:', protocol.address);
@@ -38,4 +39,5 @@ module.exports = {
     deploy,
     tokenAddress,
     donationDestination,
+    uniswapRouter,
 };
