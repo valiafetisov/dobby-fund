@@ -12,6 +12,6 @@ export default {
 export const Default = {
   render: () => ({
     components: { MyAccountSetup, NCollapse },
-    template: '<n-collapse><my-account-setup /></n-collapse>',
+    template: '<n-collapse><MyAccountSetup /></n-collapse>',
   }),
 };
