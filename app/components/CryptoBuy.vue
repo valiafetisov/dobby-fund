@@ -13,7 +13,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'getCreatedWallet', accountAddress: string, accountPrivateKey: string, accountGenerationDate: Date): void
+  (e: 'funded'): void
 }>()
 
 watch(
@@ -23,6 +23,7 @@ watch(
       if ((window as any).overlayInstance) {
         ;(window as any).overlayInstance.destroy()
       }
+      emits('funded')
     }
   }
 )

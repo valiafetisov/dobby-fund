@@ -41,15 +41,30 @@ const updateConfirmed = (isConfirmed: boolean) => {
   <div class="flex items-center justify-center">
     <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
       <n-collapse arrow-placement="right" display-directive="show" :expanded-names="currentlySelectedStep" accordion>
-        <AccountSetup @get-created-wallet="getCreatedWallet" @click="currentlySelectedStep = 'setup'" />
+        <AccountSetup
+          @get-created-wallet="getCreatedWallet"
+          @click="currentlySelectedStep = 'setup'"
+        />
         <AccountArchival
           :accountGenerationDate="accountGenerationDate"
           :accountPrivateKey="accountPrivateKey"
           @updateConfirmed="updateConfirmed"
           @click="currentlySelectedStep = 'archive'"
         />
-        <CryptoBuy :accountAddress="accountAddress" :accountBalanceLastCheckedAt="accountBalanceLastCheckedAt" :accountBalance="accountBalance" :disabled="!wasAccountArchived" @click="currentlySelectedStep = 'buy'" />
-        <LockingProtocol :accountPrivateKey="accountPrivateKey" :accountBalance="accountBalance"  @click="currentlySelectedStep = 'lock'" @locked="currentlySelectedStep = 'setup'" />
+        <CryptoBuy
+          :accountAddress="accountAddress"
+          :accountBalanceLastCheckedAt="accountBalanceLastCheckedAt"
+          :accountBalance="accountBalance"
+          :disabled="!wasAccountArchived"
+          @click="currentlySelectedStep = 'buy'"
+          @funded="currentlySelectedStep = 'lock'"
+        />
+        <LockingProtocol
+          :accountPrivateKey="accountPrivateKey"
+          :accountBalance="accountBalance"
+          @click="currentlySelectedStep = 'lock'"
+          @locked="currentlySelectedStep = 'setup'"
+        />
       </n-collapse>
     </div>
   </div>
