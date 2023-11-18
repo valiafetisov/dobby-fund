@@ -27,7 +27,7 @@ watch(
   }
 )
 
-const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance.toFixed(2)}` : 'Fund Wallet'))
+const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance}` : 'Fund Wallet'))
 
 const modalOpen = () => {
   if ((window as any).overlayInstance) {
