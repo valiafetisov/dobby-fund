@@ -101,10 +101,10 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
 <template>
   <n-collapse-item name="archive">
     <template #header>
-      <n-icon><print-icon /></n-icon>&nbsp;
-      <h4 class="font-semibold">{{ title }}</h4>
+      <n-icon><print-icon /></n-icon>
+      <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
-    <div class="flex flex-col gap-y-5 p-1">
+    <div class="flex flex-col gap-y-5 py-1">
       <div>
         Create shared secrets to safely access your funds in the future. Specify the number of shared secrets and the minimum number of
         secrets that will be required to regenerate your secret key.

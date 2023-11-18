@@ -36,10 +36,10 @@ watch(
 <template>
   <n-collapse-item name="1">
     <template #header>
-      <n-icon><print-icon /></n-icon>&nbsp;
-      <h4 class="font-semibold">Print certificate</h4>
+      <n-icon><print-icon /></n-icon>
+      <h4 class="ml-2 font-semibold">Print certificate</h4>
     </template>
-    <div class="flex flex-col gap-y-2">
+    <div class="flex flex-col gap-y-5 py-1">
       <div>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec ullamcorper eros, sed tincidunt erat. Proin congue leo eget
         lacinia suscipit. Duis felis lorem, molestie non nulla at, eleifend tristique justo. Nulla vitae libero eget est consectetur mattis
