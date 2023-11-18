@@ -17,7 +17,7 @@ const emits = defineEmits<{
 
 const archivedPartsCount = ref(0)
 const archivedPartsThreshold = ref(0)
-const downloadParts: Ref<{ index: number; downloadedAt: Date | null }[]> = ref([])
+const downloadParts: Ref<{ index: number; downloadedAt: number | null }[]> = ref([])
 const currentIndexToGenerate: Ref<number | null> = ref(null)
 const isGenerating = ref(false)
 
@@ -48,7 +48,7 @@ const generatePdf = async (index: number) => {
     setTimeout(() => {
       currentIndexToGenerate.value = null
       isGenerating.value = false
-      downloadParts.value[index].downloadedAt = new Date()
+      downloadParts.value[index].downloadedAt = new Date().getTime()
     }, 3000)
   })
 }
@@ -69,11 +69,11 @@ const generatePdf = async (index: number) => {
       <div class="flex w-full gap-x-2">
         <div>
           <span class="font-semibold">Number of parts: </span>
-          <n-input-number v-model:value="archivedPartsCount" clearable />
+          <n-input-number v-model:value="archivedPartsCount" :min="1" clearable />
         </div>
         <div>
           <span class="font-semibold">Minimun number to restore: </span>
-          <n-input-number v-model:value="archivedPartsThreshold" clearable />
+          <n-input-number v-model:value="archivedPartsThreshold" :min="1" clearable />
         </div>
       </div>
       <div class="flex flex-col gap-2">
