@@ -37,7 +37,7 @@ const generatePDFs = () => {
   const sharedSecrets: string[] = split(Buffer.from(props.accountPrivateKey), {
     shares: archivedPartsCount.value,
     threshold: archivedPartsThreshold.value,
-  }).map((secret: ArrayBuffer) => new Uint8Array(secret).toString())
+  }).map((secret: any) => Buffer.from(secret).toString('hex'))
 
   const pdfs = printHocruxPdf(
     sharedSecrets,
