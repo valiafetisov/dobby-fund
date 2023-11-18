@@ -4,7 +4,9 @@ import { LockClosed as LockIcon } from '@vicons/ionicons5'
 import { ref } from 'vue'
 import { add } from 'date-fns'
 import { JsonRpcProvider, Wallet, Contract } from 'ethers'
+import { useMessage } from 'naive-ui'
 
+const message = useMessage()
 const props = defineProps<{
   accountPrivateKey?: string;
   accountBalance?: bigint;
@@ -41,6 +43,8 @@ const lockFunds = async () => {
         await transaction.wait(3)
         const balance = await protocol.balanceOf(signer.address);
         emits('locked', balance)
+    } catch (error: any) {
+        message.error(`Locking of funds failed due to "${error.message}""`)
     } finally {
         isLocking.value = false
     }

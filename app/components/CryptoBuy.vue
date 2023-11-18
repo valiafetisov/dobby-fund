@@ -8,13 +8,24 @@ import { GateFiSDK } from '@gatefi/js-sdk'
 const props = defineProps<{
   accountAddress?: string;
   disabled: boolean;
-  accountBalance?: BigInt;
+  accountBalance?: bigint;
   accountBalanceLastCheckedAt?: Date;
 }>()
 
 const emits = defineEmits<{
   (e: 'getCreatedWallet', accountAddress: string, accountPrivateKey: string, accountGenerationDate: Date): void
 }>()
+
+watch(
+  () => props.accountBalance,
+  (newAccountBalance, oldAccountBalance) => {
+    if (newAccountBalance && newAccountBalance !== oldAccountBalance && newAccountBalance > 0n) {
+      if ((window as any).overlayInstance) {
+        ;(window as any).overlayInstance.destroy()
+      }
+    }
+  }
+)
 
 const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance.toFixed(2)}` : 'Fund Wallet'))
 
