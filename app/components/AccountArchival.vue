@@ -87,11 +87,11 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
       <div class="flex w-full gap-x-2">
         <div>
           <span class="font-semibold">Number of parts: </span>
-          <n-input-number v-model:value="archivedPartsCount" :min="3" clearable />
+          <n-input-number v-model:value="archivedPartsCount" :min="3" />
         </div>
         <div>
           <span class="font-semibold">Minimun number to restore: </span>
-          <n-input-number v-model:value="archivedPartsThreshold" :min="2" :max="archivedPartsCount" clearable />
+          <n-input-number v-model:value="archivedPartsThreshold" :min="2" :max="archivedPartsCount" />
         </div>
       </div>
       <div class="flex flex-col gap-2">
