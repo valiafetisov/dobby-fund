@@ -1,8 +1,7 @@
 const { expect } = require('chai');
 const { loadFixture, time } = require('@nomicfoundation/hardhat-network-helpers');
+const { tokenAddress, donationDestination } = require('../scripts/deploy');
 
-const tokenAddress = '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
-const donationDestination = '0x53Dc0c92380cce50e0C3D9DF625478C3d4069bf3';
 const claimableWindow = 10 * 365 * 24 * 60 * 60;
 
 const overwriteSdaiBalance = async (userAddress, desiredBalance) => {
