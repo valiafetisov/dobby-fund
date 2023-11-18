@@ -1,17 +1,16 @@
 import MyAccountSetup from './AccountSetup.vue';
-import { NCollapse } from 'naive-ui'
+import { NCollapse } from 'naive-ui';
+import { action } from '@storybook/addon-actions';
 
 export default {
   title: '/MyAccountSetup',
   component: MyAccountSetup,
-  argTypes: {
-    onGetCreatedWallet: { action: 'walletCreated' },
-  },
 };
 
 export const Default = {
   render: () => ({
     components: { MyAccountSetup, NCollapse },
-    template: '<n-collapse><MyAccountSetup /></n-collapse>',
+    methods: { getCreatedWallet: action('get-created-wallet') },
+    template: `<n-collapse><MyAccountSetup @get-created-wallet="getCreatedWallet" /></n-collapse>`,
   }),
 };
