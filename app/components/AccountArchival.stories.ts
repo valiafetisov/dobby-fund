@@ -1,5 +1,6 @@
 import MyAccountArchival from './AccountArchival.vue'
 import { NCollapse } from 'naive-ui'
+import { action } from '@storybook/addon-actions'
 
 export default {
   title: '/MyAccountArchival',
@@ -13,6 +14,7 @@ export default {
 export const Default = {
   render: () => ({
     components: { MyAccountArchival, NCollapse },
-    template: '<n-collapse display-directive="show" ><MyAccountArchival /></n-collapse>',
+    methods: { generated: action('generated'), updateConfirmed: action('updateConfirmed') },
+    template: `<n-collapse display-directive="show" ><MyAccountArchival @generated="generated" @updateConfirmed="updateConfirmed" /></n-collapse>`,
   }),
 }
