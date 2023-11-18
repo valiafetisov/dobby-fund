@@ -7,6 +7,7 @@ import { GateFiSDK } from '@gatefi/js-sdk'
 
 const props = defineProps<{
   accountAddress?: string;
+  disabled: boolean;
   currentBalance?: number;
   currentBalanceLastCheckedAt?: Date;
 }>()
@@ -47,7 +48,7 @@ const modalOpen = () => {
     <div class="flex flex-col gap-y-5 py-1">
       <div id="placeToAttach">Fund created wallet by exchanging EUR into volatile cryptocurrency called ETH.</div>
       <div class="flex w-full gap-5">
-        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress"> Buy ETH with a credit card </n-button>
+        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled"> Buy ETH with a credit card </n-button>
         <n-button class="flex-1" secondary disabled>Transfer ETH from your existing wallet</n-button>
       </div>
       <div>

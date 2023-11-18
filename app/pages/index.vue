@@ -31,7 +31,7 @@ const updateConfirmed = (isConfirmed: boolean) => {
           @updateConfirmed="updateConfirmed"
           @click="currentlySelectedStep = 'archive'"
         />
-        <CryptoBuy :accountAddress="wasAccountArchived ? accountAddress : undefined" @click="currentlySelectedStep = 'buy'" />
+        <CryptoBuy :accountAddress="accountAddress" :disabled="!wasAccountArchived" @click="currentlySelectedStep = 'buy'" />
       </n-collapse>
     </div>
   </div>
