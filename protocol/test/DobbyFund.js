@@ -80,14 +80,44 @@ describe('Token contract', function () {
 
             // widthdraw fails before deadline should fail
             await expect(protocol.withdraw()).to.be.revertedWith('nothing-to-withdraw');
-            expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
             expect(await token.balanceOf(deployer.address)).to.equal(0);
+            expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
 
             // withdraw after the deadline should work
             await time.increaseTo(deadline + 1);
             await protocol.withdraw();
             expect(await protocol.balanceOf(deployer.address)).to.equal(0);
             expect(await token.balanceOf(deployer.address)).to.equal(totalBalance);
+        });
+    });
+
+    describe('Deposits to external account', function () {
+        it('Deployer locks money for alice, alice withdraws', async function () {
+            const { token, protocol, deployer, alice } = await loadFixture(deployProtocolFixture);
+
+            // generate tokens
+            const totalBalance = 2;
+            await overwriteSdaiBalance(deployer.address, totalBalance);
+            expect(await token.balanceOf(deployer.address)).to.equal(totalBalance);
+
+            // deposit
+            const deadline = Math.floor(Date.now() / 1000) + 1000;
+            await token.approve(protocol.address, totalBalance);
+            await protocol.deposit(alice.address, totalBalance, deadline);
+            expect(await token.balanceOf(deployer.address)).to.equal(0);
+            expect(await protocol.balanceOf(alice.address)).to.equal(totalBalance);
+
+            // widthdraw fails before deadline should fail
+            const alicesProtocol = protocol.connect(alice);
+            await expect(alicesProtocol.withdraw()).to.be.revertedWith('nothing-to-withdraw');
+            expect(await alicesProtocol.balanceOf(alice.address)).to.equal(totalBalance);
+            expect(await token.balanceOf(alice.address)).to.equal(0);
+
+            // withdraw after the deadline should work
+            await time.increaseTo(deadline + 1);
+            await alicesProtocol.withdraw();
+            expect(await alicesProtocol.balanceOf(alice.address)).to.equal(0);
+            expect(await token.balanceOf(alice.address)).to.equal(totalBalance);
         });
     });
 });
