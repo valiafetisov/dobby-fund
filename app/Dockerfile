@@ -14,6 +14,9 @@ RUN npm ci
 
 FROM dependency-base AS production-base
 
+# Build in production mode
+ENV NODE_ENV=production
+
 # build will also take care of building if necessary
 COPY . .
 RUN npm run build
