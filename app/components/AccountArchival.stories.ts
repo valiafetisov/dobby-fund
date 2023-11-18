@@ -3,7 +3,7 @@ import { NCollapse } from 'naive-ui'
 import { action } from '@storybook/addon-actions'
 
 export default {
-  title: '/MyAccountArchival',
+  title: '/AccountArchival',
   component: MyAccountArchival,
   argTypes: {
     generated: { action: 'generated' },

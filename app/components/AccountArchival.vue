@@ -6,7 +6,7 @@ import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { Buffer } from 'buffer'
 import { split } from 'shamirs-secret-sharing-ts'
-import { printHocruxPdf } from '~/helpers/generatePdfs'
+import { printHocruxPdf } from '../helpers/generatePdfs'
 import { jsPDF } from 'jspdf'
 
 /**
@@ -99,7 +99,7 @@ const updateDownloadState = async (index: number) => {
   if (!generatedPdfs.value[index]) {
     return
   }
-  generatedPdfs.value[index].pdf.save()
+  generatedPdfs.value[index].pdf.save(`secret-${index + 1}.pdf`)
   await new Promise(resolve => setTimeout(resolve, 700))
   isDownloading.value = false
   currentIndexToGenerate.value = null
