@@ -1,8 +1,8 @@
 <script setup lang="ts">
-    const emit = defineEmits<{(e: 'select'): void}>()
-    const route = useRoute()
+const emit = defineEmits<{(e: 'select'): void}>()
+const route = useRoute()
 
-    const menuOptions = [
+const menuOptions = [
     {
         label: 'Create',
         key: '/',
@@ -17,7 +17,7 @@
         key: '/check',
         disabled: true,
     },
-    ]
+]
 </script>
 <template>
     <div class="flex gap-x-2">

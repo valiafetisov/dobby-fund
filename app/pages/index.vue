@@ -5,9 +5,9 @@ const accountPrivateKey = ref('')
 const accountAddress = ref('')
 const accountGenerationDate: Ref<Date | null> = ref(null)
 
-const getCreatedWallet = (privateKey: string, address: string, generationDate: Date) => {
-  accountPrivateKey.value = privateKey;
+const getCreatedWallet = (address: string, privateKey: string, generationDate: Date) => {
   accountAddress.value = address;
+  accountPrivateKey.value = privateKey;
   accountGenerationDate.value = generationDate;
 }
 const updateConfirmed = () => {
@@ -17,7 +17,7 @@ const updateConfirmed = () => {
 
 <template>
   <div class="flex items-center justify-center">
-    <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4">
+    <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
       <n-collapse arrow-placement="right" display-directive="show" default-expanded-names="setup" accordion>
         <AccountSetup @get-created-wallet="getCreatedWallet" />
         <AccountArchival :accountGenerationDate="accountGenerationDate" :accountPrivateKey="accountPrivateKey" @updateConfirmed="updateConfirmed" />
