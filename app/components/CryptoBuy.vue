@@ -8,15 +8,15 @@ import { GateFiSDK } from '@gatefi/js-sdk'
 const props = defineProps<{
   accountAddress?: string;
   disabled: boolean;
-  currentBalance?: number;
-  currentBalanceLastCheckedAt?: Date;
+  accountBalance?: BigInt;
+  accountBalanceLastCheckedAt?: Date;
 }>()
 
 const emits = defineEmits<{
   (e: 'getCreatedWallet', accountAddress: string, accountPrivateKey: string, accountGenerationDate: Date): void
 }>()
 
-const title = computed(() => (props.currentBalance ? `Wallet funded with ${props.currentBalance.toFixed(2)}` : 'Fund Wallet'))
+const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance.toFixed(2)}` : 'Fund Wallet'))
 
 const modalOpen = () => {
   if ((window as any).overlayInstance) {
@@ -54,11 +54,11 @@ const modalOpen = () => {
       <div>
         <span
           >Current balance:
-          <span v-if="accountAddress">{{ (currentBalance ?? 0).toFixed(2) }} ETH</span>
+          <span v-if="accountAddress">{{ (accountBalance ?? 0) }} ETH</span>
           <span v-else class="text-neutral-400">Unknown</span>
         </span>
-        <span class="text-gray-400" v-if="currentBalanceLastCheckedAt"
-          >&nbsp;(last updated at {{ format(currentBalanceLastCheckedAt, 'HH:mm dd.MM.yyyy') }})</span
+        <span class="text-gray-400" v-if="accountBalanceLastCheckedAt"
+          >&nbsp;(last updated at {{ format(accountBalanceLastCheckedAt, 'HH:mm dd.MM.yyyy') }})</span
         >
       </div>
     </div>

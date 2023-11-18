@@ -1,0 +1,64 @@
+<script setup lang="ts">
+import { NCollapseItem, NIcon, NButton } from 'naive-ui'
+import { LockClosed as LockIcon } from '@vicons/ionicons5'
+import { ref } from 'vue'
+import { add } from 'date-fns'
+import { JsonRpcProvider, Wallet, Contract } from 'ethers'
+
+const props = defineProps<{
+  accountPrivateKey?: string;
+  accountBalance?: bigint;
+}>()
+
+const config = useRuntimeConfig()
+const dateInTheFuture = add(new Date(), {years: 1})
+const selectedDate = ref(dateInTheFuture.valueOf())
+const isLocking = ref(false)
+
+const lockFunds = async () => {
+    if (!props.accountPrivateKey) {
+        return
+    }
+    try {
+        isLocking.value = true
+        const deadlineUnixTimestamp = Math.floor(selectedDate.value / 1000)
+        const provider = new JsonRpcProvider(config.public.rpcUrl)
+        const signer = new Wallet(props.accountPrivateKey, provider)
+        const protocol = new Contract(
+            config.public.protocolAddress,
+            [
+                'function depositEth(address receiver, uint40 claimableDate) external payable returns (uint256)',
+            ],
+            signer
+        );
+        const ethBalance = await provider.getBalance(signer.address);
+        const approximateTransactionCost = 433948006075272n;
+        const transaction = await protocol.depositEth(signer.address, deadlineUnixTimestamp, { value: ethBalance - approximateTransactionCost });
+        await transaction.wait(3)
+    } finally {
+        isLocking.value = false
+    }
+}
+</script>
+
+<template>
+  <n-collapse-item name="lock">
+    <template #header>
+      <n-icon><lock-icon /></n-icon>
+      <h4 class="ml-2 font-semibold">Lock funds</h4>
+    </template>
+    <div class="flex flex-col gap-y-5 py-1">
+      <p>
+        You are about to exchange deposited funds into one of the yield-bearing tokens.
+        By locking them into a smart contract you ensure that they can't be spent before the specified date.
+        Please note that if funds are not reclaimed after a period of 10 years from the unlock date, they will be donated to a public goods organisation.
+      </p>
+      <div class="flex flex-col w-full gap-5">
+        <n-date-picker v-model:value="selectedDate" type="date" class="w-full" />
+        <n-button type="info" :loading="isLocking" @click="lockFunds" :disabled="!accountPrivateKey || accountBalance === 0n">
+          Lock funds
+        </n-button>
+      </div>
+    </div>
+  </n-collapse-item>
+</template>

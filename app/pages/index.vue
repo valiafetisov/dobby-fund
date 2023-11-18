@@ -1,11 +1,28 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import { JsonRpcProvider } from 'ethers'
 
+const config = useRuntimeConfig()
 const currentlySelectedStep = ref('setup')
 const accountPrivateKey = ref('')
 const accountAddress = ref('')
-const accountGenerationDate: Ref<Date | null> = ref(null)
+const accountGenerationDate: Ref<Date | undefined> = ref()
 const wasAccountArchived = ref(false)
+const accountBalance = ref(0n)
+const accountBalanceLastCheckedAt: Ref<Date | undefined> = ref()
+const provider = new JsonRpcProvider(config.public.rpcUrl)
+
+const checkBalance = async () => {
+  if (!accountAddress.value) {
+    return
+  }
+  try {
+    accountBalance.value = await provider.getBalance(accountAddress.value);
+    accountBalanceLastCheckedAt.value = new Date()
+  } catch {}
+}
+checkBalance()
+setInterval(checkBalance, 5000)
 
 const getCreatedWallet = (address: string, privateKey: string, generationDate: Date) => {
   accountAddress.value = address
@@ -31,7 +48,8 @@ const updateConfirmed = (isConfirmed: boolean) => {
           @updateConfirmed="updateConfirmed"
           @click="currentlySelectedStep = 'archive'"
         />
-        <CryptoBuy :accountAddress="accountAddress" :disabled="!wasAccountArchived" @click="currentlySelectedStep = 'buy'" />
+        <CryptoBuy :accountAddress="accountAddress" :accountBalanceLastCheckedAt="accountBalanceLastCheckedAt" :accountBalance="accountBalance" :disabled="!wasAccountArchived" @click="currentlySelectedStep = 'buy'" />
+        <LockingProtocol :accountPrivateKey="accountPrivateKey" :accountBalance="accountBalance"  @click="currentlySelectedStep = 'lock'" />
       </n-collapse>
     </div>
   </div>

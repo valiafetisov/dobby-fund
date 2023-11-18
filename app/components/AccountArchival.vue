@@ -15,7 +15,7 @@ import { split } from 'shamirs-secret-sharing-ts'
 window.Buffer = Buffer
 const props = defineProps<{
   accountPrivateKey: string
-  accountGenerationDate: Date | null
+  accountGenerationDate?: Date
 }>()
 
 const emits = defineEmits<{
@@ -122,7 +122,7 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
       <div class="flex flex-col gap-2">
         <div v-if="!downloadParts?.length" class="flex flex-col gap-2">
           <div v-for="index in archivedPartsCount" class="flex gap-x-12">
-            <n-button secondary disabled class="flex-1 flex-shrink-0">
+            <n-button type="info" disabled class="flex-1 flex-shrink-0">
               Download shared secret {{ index }} / {{ archivedPartsCount }}
             </n-button>
             <div class="flex-1 flex-shrink-0"></div>
