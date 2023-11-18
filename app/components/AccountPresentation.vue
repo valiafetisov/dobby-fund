@@ -50,7 +50,7 @@ watch(
         <n-button :type="downloadedAt ? 'default' : 'primary'" :loading="isGenerating" @click="generatePdf()">
           Download account certificate
         </n-button>
-        <div v-if="downloadedAt" class="text-gray-400 flex items-center">Downloaded at {{ format(downloadedAt, 'hh:mm MM/dd/yyyy') }}</div>
+        <div v-if="downloadedAt" class="text-gray-400 flex items-center">Downloaded at {{ format(downloadedAt, 'HH:mm dd.MM.yyyy') }}</div>
       </div>
     </div>
   </n-collapse-item>
