@@ -51,12 +51,13 @@ watch(
   }
 )
 
-watchEffect(() => {
-  const isConfirmed = downloadParts.value.every(({ downloadedAt }) => downloadedAt !== null)
+const isConfirmed = computed(() => downloadParts.value.every(({ downloadedAt }) => downloadedAt !== null))
+
+watch(isConfirmed, isConfirmed => {
   emits('updateConfirmed', isConfirmed)
 })
 
-const title = computed(() => 'Preserve wallet')
+const title = computed(() => (isConfirmed.value ? `Wallet is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve wallet'))
 
 const generatePdf = async (index: number) => {
   currentIndexToGenerate.value = index
@@ -80,10 +81,8 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
     </template>
     <div class="flex flex-col gap-y-2">
       <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec ullamcorper eros, sed tincidunt erat. Proin congue leo eget
-        lacinia suscipit. Duis felis lorem, molestie non nulla at, eleifend tristique justo. Nulla vitae libero eget est consectetur mattis
-        nec at nisi. Pellentesque hendrerit elementum ultricies. Nunc ac scelerisque nunc. Maecenas mattis blandit ante, vel tristique ipsum
-        semper vitae. Etiam at tincidunt est. Nullam ut enim pretium, pellentesque sapien ac, scelerisque nunc.
+        Create shared secrets to safely access your funds in the future. Specify the number of shared secrets and the minimum number of
+        secrets that will be required to regenerate your secret key.
       </div>
       <div class="flex w-full gap-x-2">
         <div>
