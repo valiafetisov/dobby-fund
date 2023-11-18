@@ -24,13 +24,14 @@ const updateConfirmed = () => {
   <div class="flex items-center justify-center">
     <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
       <n-collapse arrow-placement="right" display-directive="show" :expanded-names="collapseToExpand" accordion>
-        <AccountSetup @get-created-wallet="getCreatedWallet" />
+        <AccountSetup @get-created-wallet="getCreatedWallet" @click="collapseToExpand = 'setup'" />
         <AccountArchival
           :accountGenerationDate="accountGenerationDate"
           :accountPrivateKey="accountPrivateKey"
           @updateConfirmed="updateConfirmed"
+          @click="collapseToExpand = 'archive'"
         />
-        <CryptoBuy :accountAddress="accountAddress" />
+        <CryptoBuy :accountAddress="accountAddress" @click="collapseToExpand = 'buy'" />
       </n-collapse>
     </div>
   </div>
