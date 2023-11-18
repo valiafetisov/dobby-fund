@@ -4,6 +4,10 @@ import { computed, ref, watch, watchEffect } from 'vue'
 import type { Ref } from 'vue'
 import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
+import { Buffer } from 'buffer'
+import { split } from 'shamirs-secret-sharing-ts'
+
+window.Buffer = window.Buffer || Buffer
 
 const props = defineProps<{
   accountPrivateKey: string
@@ -15,9 +19,26 @@ const emits = defineEmits<{
   (e: 'updateConfirmed', isConfirmed: boolean): void
 }>()
 
-const archivedPartsCount = ref(1)
-const archivedPartsThreshold = ref(1)
-const downloadParts: Ref<{ index: number; downloadedAt: number | null }[]> = ref([{ index: 0, downloadedAt: null }])
+const archivedPartsCount = ref(3)
+const archivedPartsThreshold = ref(2)
+
+const generateDownloadParts = () => {
+  const sharedSecrets: ArrayBuffer[] = split(Buffer.from(props.accountPrivateKey), {
+    shares: archivedPartsCount.value,
+    threshold: archivedPartsThreshold.value,
+  })
+
+  const downloadParts = sharedSecrets.map((secret, index) => ({
+    index,
+    sharedSecret: new Uint8Array(secret).toString(),
+    downloadedAt: null,
+  }))
+
+  emits('generated', archivedPartsCount.value, archivedPartsThreshold.value)
+  return downloadParts
+}
+
+const downloadParts: Ref<{ index: number; sharedSecret: string; downloadedAt: number | null }[]> = ref(generateDownloadParts())
 const currentIndexToGenerate: Ref<number | null> = ref(null)
 const isGenerating = ref(false)
 
@@ -25,11 +46,7 @@ watch(
   [archivedPartsCount, archivedPartsThreshold],
   ([newArchivedPartsCount, oldArchivedPartsCount], [newArchivedPartsThreshold, oldArchivedPartsThreshold]) => {
     if (newArchivedPartsCount !== oldArchivedPartsCount || newArchivedPartsThreshold !== oldArchivedPartsThreshold) {
-      downloadParts.value = Array.from({ length: archivedPartsCount.value }, (_, index) => ({
-        index,
-        downloadedAt: null,
-      }))
-      emits('generated', archivedPartsCount.value, archivedPartsThreshold.value)
+      downloadParts.value = generateDownloadParts()
     }
   }
 )
@@ -52,6 +69,8 @@ const generatePdf = async (index: number) => {
     }, 3000)
   })
 }
+
+const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value], { type: 'text/plain' }))
 </script>
 <template>
   <n-collapse-item name="1">
@@ -69,22 +88,24 @@ const generatePdf = async (index: number) => {
       <div class="flex w-full gap-x-2">
         <div>
           <span class="font-semibold">Number of parts: </span>
-          <n-input-number v-model:value="archivedPartsCount" :min="1" clearable />
+          <n-input-number v-model:value="archivedPartsCount" :min="3" clearable />
         </div>
         <div>
           <span class="font-semibold">Minimun number to restore: </span>
-          <n-input-number v-model:value="archivedPartsThreshold" :min="1" clearable />
+          <n-input-number v-model:value="archivedPartsThreshold" :min="2" :max="archivedPartsCount" clearable />
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <div v-for="{ index, downloadedAt } of downloadParts" :key="index" class="flex gap-x-2 items-center">
-          <n-button
-            :type="downloadedAt ? 'default' : 'primary'"
-            :loading="isGenerating && index === currentIndexToGenerate"
-            @click="generatePdf(index)"
-          >
-            Download shared secret {{ index + 1 }} / {{ downloadParts.length }}
-          </n-button>
+        <div v-for="{ index, sharedSecret, downloadedAt } of downloadParts" :key="index" class="flex gap-x-2 items-center">
+          <a :href="generateTextFile(sharedSecret)" download>
+            <n-button
+              :type="downloadedAt ? 'default' : 'primary'"
+              :loading="isGenerating && index === currentIndexToGenerate"
+              @click="generatePdf(index)"
+            >
+              Download shared secret {{ index + 1 }} / {{ downloadParts.length }}
+            </n-button>
+          </a>
           <span v-if="downloadedAt" class="text-gray-400">Downloaded at {{ format(downloadedAt, 'hh:mm MM/dd/yyyy') }}</span>
         </div>
       </div>
