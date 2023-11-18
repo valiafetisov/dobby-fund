@@ -78,7 +78,7 @@ describe('Token contract', function () {
             expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
             expect(await token.balanceOf(deployer.address)).to.equal(0);
 
-            // widthdraw fails before deadline should fail
+            // widthdraw before deadline should fail
             await expect(protocol.withdraw()).to.be.revertedWith('nothing-to-withdraw');
             expect(await token.balanceOf(deployer.address)).to.equal(0);
             expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
@@ -107,7 +107,7 @@ describe('Token contract', function () {
             expect(await token.balanceOf(deployer.address)).to.equal(0);
             expect(await protocol.balanceOf(alice.address)).to.equal(totalBalance);
 
-            // widthdraw fails before deadline should fail
+            // widthdraw before deadline should fail
             const alicesProtocol = protocol.connect(alice);
             await expect(alicesProtocol.withdraw()).to.be.revertedWith('nothing-to-withdraw');
             expect(await alicesProtocol.balanceOf(alice.address)).to.equal(totalBalance);
@@ -118,6 +118,43 @@ describe('Token contract', function () {
             await alicesProtocol.withdraw();
             expect(await alicesProtocol.balanceOf(alice.address)).to.equal(0);
             expect(await token.balanceOf(alice.address)).to.equal(totalBalance);
+        });
+    });
+
+    describe('Donation strategy', function () {
+        it('Deployer locks money, bob tiggers donation', async function () {
+            const { token, protocol, deployer, bob } = await loadFixture(deployProtocolFixture);
+            const destinationInitialBalance = await token.balanceOf(donationDestination);
+
+            // generate tokens
+            const totalBalance = 2;
+            await overwriteSdaiBalance(deployer.address, totalBalance);
+            expect(await token.balanceOf(deployer.address)).to.equal(totalBalance);
+
+            // deposit
+            const deadline = Math.floor(Date.now() / 1000) + 1000;
+            await token.approve(protocol.address, totalBalance);
+            await protocol.deposit(deployer.address, totalBalance, deadline);
+            expect(await token.balanceOf(deployer.address)).to.equal(0);
+            expect(await protocol.balanceOf(deployer.address)).to.equal(totalBalance);
+
+            // donation before deadline should fail
+            const bobsProtocol = protocol.connect(bob);
+            await expect(bobsProtocol.donateUnclaimed(deployer.address)).to.be.revertedWith('nothing-to-donate');
+            expect(await bobsProtocol.balanceOf(deployer.address)).to.equal(totalBalance);
+            expect(await token.balanceOf(donationDestination)).to.equal(destinationInitialBalance);
+
+            // donation after deadline but before claimableWindow expired should also fail
+            await time.increaseTo(deadline + 1);
+            await expect(bobsProtocol.donateUnclaimed(deployer.address)).to.be.revertedWith('nothing-to-donate');
+            expect(await bobsProtocol.balanceOf(deployer.address)).to.equal(totalBalance);
+            expect(await token.balanceOf(donationDestination)).to.equal(destinationInitialBalance);
+
+            // donation after the deadline + claimableWindow should work
+            await time.increaseTo(deadline + claimableWindow + 1);
+            await bobsProtocol.donateUnclaimed(deployer.address);
+            expect(await bobsProtocol.balanceOf(deployer.address)).to.equal(0);
+            expect(await token.balanceOf(donationDestination)).to.equal(destinationInitialBalance + totalBalance);
         });
     });
 });

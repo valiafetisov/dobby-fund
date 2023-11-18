@@ -37,7 +37,6 @@ contract DobbyFund {
     }
 
     function withdraw() external {
-        require(deposits[msg.sender].length > 0, 'no-deposits-yet');
         uint256 totalToTransfer = 0;
         for (uint i = 0; i < deposits[msg.sender].length; i++) {
             if (
@@ -52,18 +51,19 @@ contract DobbyFund {
         token.transferFrom(address(this), msg.sender, totalToTransfer);
     }
 
-    function donateUnclained(address receiver) external {
-        require(deposits[receiver].length > 0, 'no deposits');
+    function donateUnclaimed(address receiver) external {
+        uint256 totalToTransfer = 0;
         for (uint i = 0; i < deposits[receiver].length; i++) {
             if (
-                deposits[receiver][i].claimableDate + claimableWindow < block.timestamp
+                deposits[receiver][i].claimableDate + claimableWindow > block.timestamp
             ) {
                 continue;
             }
-            uint256 amountToTransfer = deposits[receiver][i].amount;
+            totalToTransfer = totalToTransfer + deposits[receiver][i].amount;
             delete deposits[receiver][i];
-            token.transferFrom(address(this), donationDestination, amountToTransfer);
         }
+        require(totalToTransfer > 0, 'nothing-to-donate');
+        token.transferFrom(address(this), donationDestination, totalToTransfer);
     }
 
     function balanceOf(address account) external view returns (uint256) {
