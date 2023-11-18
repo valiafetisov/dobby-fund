@@ -5,7 +5,8 @@ export default {
   title: '/MyAccountArchival',
   component: MyAccountArchival,
   argTypes: {
-    onGetCreatedWallet: { action: 'walletCreated' },
+    generated: { action: 'generated' },
+    updateConfirmed: { action: 'updateConfirmed' },
   },
 }
 
