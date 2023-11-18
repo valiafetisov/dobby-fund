@@ -26,7 +26,7 @@ const generateWallet = async () => {
   const wallet = Wallet.createRandom();
   publicAddress.value = wallet.address;
   isCreating.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1500))
+  await new Promise(resolve => setTimeout(resolve, 700))
   isCreating.value = false;
   emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
 };
