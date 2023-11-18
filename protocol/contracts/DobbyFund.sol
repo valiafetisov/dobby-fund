@@ -7,6 +7,12 @@ interface Erc20Like {
     function balanceOf(address) external view returns (uint256);
 }
 
+interface SdaiLike {
+    function dai() external view returns (address);
+    function deposit(uint256 assets, address receiver) external returns (uint256 shares);
+    function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets);
+}
+
 interface UniswapRouterLike {
     function WETH() external view returns (address);
     function swapExactETHForTokens(uint256 amountOutMin, address[] memory path, address to, uint256 deadline)
@@ -54,13 +60,21 @@ contract DobbyFund {
     }
 
     function depositEth(address receiver, uint40 claimableDate) external payable returns (uint256) {
+        // exchange to dai
         address[] memory path = new address[](2);
         path[0] = router.WETH();
-        path[1] = address(token);
+        path[1] = SdaiLike(address(token)).dai();
         uint256[] memory amounts = router.swapExactETHForTokens{ value: msg.value }(0, path, address(this), block.timestamp + 15);
-        deposits[receiver].push(Deposit(claimableDate, amounts[1]));
-        emit Deposited(receiver, claimableDate, amounts[1]);
-        return amounts[1];
+        uint256 daiAmount = amounts[1];
+
+        // deposit to sdai
+        Erc20Like(path[1]).approve(address(token), daiAmount);
+        uint256 sDaiAmount = SdaiLike(address(token)).deposit(daiAmount, address(this));
+
+        // record amounts
+        deposits[receiver].push(Deposit(claimableDate, sDaiAmount));
+        emit Deposited(receiver, claimableDate, sDaiAmount);
+        return sDaiAmount;
     }
 
     function withdraw() external {
