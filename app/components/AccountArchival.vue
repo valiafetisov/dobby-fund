@@ -15,7 +15,7 @@ import { split } from 'shamirs-secret-sharing-ts'
 window.Buffer = Buffer
 const props = defineProps<{
   accountPrivateKey: string
-  accountGenerationDate: Date | undefined
+  accountGenerationDate: Date | null
 }>()
 
 const emits = defineEmits<{
