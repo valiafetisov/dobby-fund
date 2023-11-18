@@ -33,8 +33,10 @@
   },
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "^1.5.5",
+    "@gatefi/js-sdk": "^0.14.0",
     "@nuxtjs/tailwindcss": "^6.9.5",
     "@vicons/ionicons5": "^0.12.0",
+    "@vueuse/router": "^10.6.1",
     "date-fns": "^2.30.0",
     "ethers": "^6.8.1"
   }
