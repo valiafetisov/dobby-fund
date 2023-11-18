@@ -9,6 +9,9 @@ const props = defineProps<{
   accountPrivateKey?: string;
   accountBalance?: bigint;
 }>()
+const emits = defineEmits<{
+  (e: 'locked', amount: bigint): void
+}>()
 
 const config = useRuntimeConfig()
 const dateInTheFuture = add(new Date(), {years: 1})
@@ -28,6 +31,7 @@ const lockFunds = async () => {
             config.public.protocolAddress,
             [
                 'function depositEth(address receiver, uint40 claimableDate) external payable returns (uint256)',
+                'function balanceOf(address account) external view returns (uint256)'
             ],
             signer
         );
@@ -35,6 +39,8 @@ const lockFunds = async () => {
         const approximateTransactionCost = 433948006075272n;
         const transaction = await protocol.depositEth(signer.address, deadlineUnixTimestamp, { value: ethBalance - approximateTransactionCost });
         await transaction.wait(3)
+        const balance = await protocol.balanceOf(signer.address);
+        emits('locked', balance)
     } finally {
         isLocking.value = false
     }
@@ -54,7 +60,7 @@ const lockFunds = async () => {
         Please note that if funds are not reclaimed after a period of 10 years from the unlock date, they will be donated to a public goods organisation.
       </p>
       <div class="flex flex-col w-full gap-5">
-        <n-date-picker v-model:value="selectedDate" type="date" class="w-full" />
+        <n-date-picker v-model:value="selectedDate" :disabled="isLocking" type="date" class="w-full" />
         <n-button type="info" :loading="isLocking" @click="lockFunds" :disabled="!accountPrivateKey || accountBalance === 0n">
           Lock funds
         </n-button>

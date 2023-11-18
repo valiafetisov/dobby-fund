@@ -49,7 +49,7 @@ const updateConfirmed = (isConfirmed: boolean) => {
           @click="currentlySelectedStep = 'archive'"
         />
         <CryptoBuy :accountAddress="accountAddress" :accountBalanceLastCheckedAt="accountBalanceLastCheckedAt" :accountBalance="accountBalance" :disabled="!wasAccountArchived" @click="currentlySelectedStep = 'buy'" />
-        <LockingProtocol :accountPrivateKey="accountPrivateKey" :accountBalance="accountBalance"  @click="currentlySelectedStep = 'lock'" />
+        <LockingProtocol :accountPrivateKey="accountPrivateKey" :accountBalance="accountBalance"  @click="currentlySelectedStep = 'lock'" @locked="currentlySelectedStep = 'setup'" />
       </n-collapse>
     </div>
   </div>
