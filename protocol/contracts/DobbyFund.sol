@@ -37,17 +37,19 @@ contract DobbyFund {
     }
 
     function withdraw() external {
-        require(deposits[msg.sender].length > 0, 'no deposits');
+        require(deposits[msg.sender].length > 0, 'no-deposits-yet');
+        uint256 totalToTransfer = 0;
         for (uint i = 0; i < deposits[msg.sender].length; i++) {
             if (
-                deposits[msg.sender][i].claimableDate < block.timestamp
+                deposits[msg.sender][i].claimableDate > block.timestamp
             ) {
                 continue;
             }
-            uint256 amountToTransfer = deposits[msg.sender][i].amount;
+            totalToTransfer = totalToTransfer + deposits[msg.sender][i].amount;
             delete deposits[msg.sender][i];
-            token.transferFrom(address(this), msg.sender, amountToTransfer);
         }
+        require(totalToTransfer > 0, 'nothing-to-withdraw');
+        token.transferFrom(address(this), msg.sender, totalToTransfer);
     }
 
     function donateUnclained(address receiver) external {
