@@ -53,11 +53,11 @@ const modalOpen = () => {
       <div>
         <span
           >Current balance:
-          <span v-if="accountAddress && currentBalance !== undefined">{{ currentBalance.toFixed(2) }} ETH</span>
+          <span v-if="accountAddress">{{ (currentBalance ?? 0).toFixed(2) }} ETH</span>
           <span v-else class="text-neutral-400">Unknown</span>
         </span>
         <span class="text-gray-400" v-if="currentBalanceLastCheckedAt"
-          >&nbsp;(last updated at {{ format(currentBalanceLastCheckedAt, 'hh:mm dd.mm.yyyy') }})</span
+          >&nbsp;(last updated at {{ format(currentBalanceLastCheckedAt, 'HH:mm dd.MM.yyyy') }})</span
         >
       </div>
     </div>
