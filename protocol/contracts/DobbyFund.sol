@@ -30,7 +30,7 @@ contract DobbyFund {
         claimableWindow = claimableWindow_;
     }
 
-    function deposit(receiver, claimableDate, amount) external {
+    function deposit(address receiver, uint40 claimableDate, uint256 amount) external {
         token.approve(address(this), amount);
         token.transferFrom(msg.sender, address(this), amount);
         deposits[receiver].push(Deposit(claimableDate, amount));
@@ -50,7 +50,7 @@ contract DobbyFund {
     function balanceOf(address account) external view returns (uint256) {
         uint256 total = 0;
         for (uint i = 0; i < deposits[account].length; i++) {
-            total =+ deposits[account][i].amount;
+            total = total + deposits[account][i].amount;
         }
         return total;
     }
