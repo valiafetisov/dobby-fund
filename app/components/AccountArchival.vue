@@ -6,6 +6,8 @@ import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { Buffer } from 'buffer'
 import { split } from 'shamirs-secret-sharing-ts'
+import { printHocruxPdf } from '~/helpers/generatePdfs'
+import { jsPDF } from 'jspdf'
 
 /**
  * To resolve `Uncaught (in promise) ReferenceError: Buffer is not defined`
@@ -14,7 +16,8 @@ import { split } from 'shamirs-secret-sharing-ts'
  */
 window.Buffer = Buffer
 const props = defineProps<{
-  accountPrivateKey: string
+  accountAddress?: string
+  accountPrivateKey?: string
   accountGenerationDate: Date | null
 }>()
 
@@ -26,27 +29,34 @@ const emits = defineEmits<{
 const archivedPartsCount = ref(3)
 const archivedPartsThreshold = ref(2)
 
-const generateDownloadParts = () => {
-  if (!props.accountPrivateKey) {
+const generatePDFs = () => {
+  if (!(props.accountPrivateKey && props.accountAddress && props.accountGenerationDate)) {
     return []
   }
 
-  const sharedSecrets: ArrayBuffer[] = split(Buffer.from(props.accountPrivateKey), {
+  const sharedSecrets: string[] = split(Buffer.from(props.accountPrivateKey), {
     shares: archivedPartsCount.value,
     threshold: archivedPartsThreshold.value,
-  })
+  }).map((secret: ArrayBuffer) => new Uint8Array(secret).toString())
 
-  const downloadParts = sharedSecrets.map((secret, index) => ({
-    index,
-    sharedSecret: new Uint8Array(secret).toString(),
+  const pdfs = printHocruxPdf(
+    sharedSecrets,
+    props.accountAddress,
+    props.accountGenerationDate,
+    archivedPartsCount.value,
+    archivedPartsThreshold.value
+  )
+
+  const pdfsWithDownloadedAt = pdfs.map(pdf => ({
+    pdf,
     downloadedAt: null,
   }))
 
   emits('generated', archivedPartsCount.value, archivedPartsThreshold.value)
-  return downloadParts
+  return pdfsWithDownloadedAt
 }
 
-const downloadParts: Ref<{ index: number; sharedSecret: string; downloadedAt: number | null }[] | undefined> = ref(generateDownloadParts())
+const generatedPdfs = ref<{ pdf: jsPDF; downloadedAt: number | null }[]>([])
 const currentIndexToGenerate: Ref<number | null> = ref(null)
 const isDownloading = ref(false)
 
@@ -54,7 +64,7 @@ watch(
   [archivedPartsCount, archivedPartsThreshold],
   ([newArchivedPartsCount, oldArchivedPartsCount], [newArchivedPartsThreshold, oldArchivedPartsThreshold]) => {
     if (newArchivedPartsCount !== oldArchivedPartsCount || newArchivedPartsThreshold !== oldArchivedPartsThreshold) {
-      downloadParts.value = generateDownloadParts()
+      generatedPdfs.value = generatePDFs()
     }
   }
 )
@@ -63,13 +73,13 @@ watch(
   () => props.accountPrivateKey,
   (newPrivateKey, oldPrivateKey) => {
     if (newPrivateKey !== oldPrivateKey) {
-      downloadParts.value = generateDownloadParts()
+      generatedPdfs.value = generatePDFs()
     }
   }
 )
 
 const isConfirmed = computed(() => {
-  return downloadParts.value?.length ? downloadParts.value.every(({ downloadedAt }) => downloadedAt !== null) : false
+  return generatedPdfs.value?.length ? generatedPdfs.value.every(({ downloadedAt }) => downloadedAt !== null) : false
 })
 
 watch(isConfirmed, isConfirmed => {
@@ -79,24 +89,22 @@ watch(isConfirmed, isConfirmed => {
 const title = computed(() => (isConfirmed.value ? `Wallet is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve wallet'))
 
 const updateDownloadState = async (index: number) => {
-  if (!downloadParts.value) {
+  if (!generatedPdfs.value) {
     return
   }
 
   currentIndexToGenerate.value = index
   isDownloading.value = true
 
-  setTimeout(() => {
-    if (!downloadParts.value) {
-      return
-    }
-    currentIndexToGenerate.value = null
-    isDownloading.value = false
-    downloadParts.value[index].downloadedAt = new Date().getTime()
-  }, 750)
+  if (!generatedPdfs.value[index]) {
+    return
+  }
+  generatedPdfs.value[index].pdf.save()
+  await new Promise(resolve => setTimeout(resolve, 700))
+  isDownloading.value = false
+  currentIndexToGenerate.value = null
+  generatedPdfs.value[index].downloadedAt = new Date().getTime()
 }
-
-const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value], { type: 'text/plain' }))
 </script>
 <template>
   <n-collapse-item name="archive">
@@ -120,18 +128,16 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <div v-for="{ index, sharedSecret, downloadedAt } of downloadParts" :key="index" class="flex gap-x-5 items-center">
-          <a :href="generateTextFile(sharedSecret)" download class="block flex-1">
-            <n-button
-              class="w-full"
-              :type="downloadedAt ? 'default' : 'info'"
-              :secondary="!!downloadedAt"
-              :loading="isDownloading && index === currentIndexToGenerate"
-              @click="updateDownloadState(index)"
-            >
-              Download shared secret {{ index + 1 }} / {{ downloadParts ? downloadParts.length : 0 }}
-            </n-button>
-          </a>
+        <div v-for="({ downloadedAt }, index) of generatedPdfs" :key="index" class="flex gap-x-5 items-center">
+          <n-button
+            class="w-full flex-1"
+            :type="downloadedAt ? 'default' : 'info'"
+            :secondary="!!downloadedAt"
+            :loading="isDownloading && index === currentIndexToGenerate"
+            @click="updateDownloadState(index)"
+          >
+            Download shared secret {{ index + 1 }} / {{ generatedPdfs ? generatedPdfs.length : 0 }}
+          </n-button>
           <div class="text-gray-400 flex-1">
             <span v-if="downloadedAt">Downloaded at {{ format(downloadedAt, 'HH:mm dd.MM.yyyy') }}</span>
           </div>

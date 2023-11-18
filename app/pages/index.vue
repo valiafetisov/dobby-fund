@@ -27,6 +27,7 @@ const updateConfirmed = () => {
         <AccountArchival
           :accountGenerationDate="accountGenerationDate"
           :accountPrivateKey="accountPrivateKey"
+          :accountAddress="accountAddress"
           @updateConfirmed="updateConfirmed"
           @click="collapseToExpand = 'archive'"
         />
