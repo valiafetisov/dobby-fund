@@ -14,7 +14,6 @@ const getCreatedWallet = (address: string, privateKey: string, generationDate: D
 }
 
 const updateConfirmed = () => {
-  // TODO: update the value
   collapseToExpand.value = 'buy'
   console.log('updateConfirmed')
 }
