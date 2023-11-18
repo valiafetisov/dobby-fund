@@ -93,7 +93,7 @@ const updateDownloadState = async (index: number) => {
     currentIndexToGenerate.value = null
     isDownloading.value = false
     downloadParts.value[index].downloadedAt = new Date().getTime()
-  }, 1500)
+  }, 750)
 }
 
 const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value], { type: 'text/plain' }))
