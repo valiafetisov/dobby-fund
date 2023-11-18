@@ -36,12 +36,12 @@ const generateWallet = async () => {
 };
 </script>
 <template>
-  <n-collapse-item name="1">
+  <n-collapse-item name="setup">
     <template #header>
       <n-icon><wallet-icon /></n-icon>&nbsp;
       <h4 class="font-semibold">{{ title }}</h4>
     </template>
-    <div class="flex flex-col gap-y-2">
+    <div class="flex flex-col gap-y-5 p-1">
       <p>
         In order to buy crypto, one has to have a private key which would hold
         the tokens. Most customer-friendly apps would hold the key for you (and
