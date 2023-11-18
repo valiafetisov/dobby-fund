@@ -6,14 +6,13 @@ import "hardhat/console.sol";
 interface ERC20 {
     function approve(address, uint256) external;
     function transferFrom(address, address, uint256) external;
-    function transfer(address, uint256) external;
 }
 
 contract DobbyFund {
 
     // Supported token
     ERC20 public immutable token;
-    address public immutable donation;
+    address public immutable donationDestination;
     
     // Time window in seconds in which tokens are claimable after the claimableDate
     uint40 public immutable claimableWindow;
@@ -47,7 +46,21 @@ contract DobbyFund {
             }
             uint256 amountToTransfer = deposits[msg.sender][i].amount;
             delete deposits[msg.sender][i];
-            token.transfer(msg.sender, amountToTransfer);
+            token.transferFrom(address(this), msg.sender, amountToTransfer);
+        }
+    }
+
+    function donateUnclained(address receiver) external {
+        require(deposits[receiver].length > 0, 'no deposits');
+        for (uint i = 0; i < deposits[receiver].length; i++) {
+            if (
+                deposits[receiver][i].claimableDate + claimableWindow < block.timestamp
+            ) {
+                continue;
+            }
+            uint256 amountToTransfer = deposits[receiver][i].amount;
+            delete deposits[receiver][i];
+            token.transferFrom(address(this), donationDestination, amountToTransfer);
         }
     }
 
