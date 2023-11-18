@@ -4,3 +4,4 @@ export default defineNuxtConfig({
   css: ['~/assets/css/preflight.css'],
   modules: ['@nuxtjs/tailwindcss', '@bg-dev/nuxt-naiveui'],
 });
+

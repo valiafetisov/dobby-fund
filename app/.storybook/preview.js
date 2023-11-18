@@ -1,4 +1,4 @@
-import 'tailwindcss/tailwind.css';
+import 'tailwindcss/tailwind.css'
 
 /** @type { import('@storybook/vue3').Preview } */
 const preview = {
@@ -10,6 +10,6 @@ const preview = {
       },
     },
   },
-};
+}
 
-export default preview;
+export default preview
