@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton, NSpin } from 'naive-ui';
+import { NCollapseItem, NIcon, NButton, NSelect } from 'naive-ui';
 import { computed, ref } from 'vue';
 import type { Ref } from 'vue';
-import { Wallet as WalletIcon } from '@vicons/ionicons5';
-import { Wallet } from 'ethers';
+import { Card as CardIcon } from '@vicons/ionicons5';
+import { format } from 'date-fns';
+
 const emits = defineEmits<{
   (
     e: 'getCreatedWallet',
@@ -12,56 +13,42 @@ const emits = defineEmits<{
     accountGenerationDate: Date
   ): void;
 }>();
-const publicAddress: Ref<string | null> = ref(null);
-const isCreating = ref(false);
-const title = computed(() =>
-  publicAddress.value && !isCreating.value
-    ? `Created wallet ${publicAddress.value}`
-    : 'Create new or restore existing wallet'
-);
-const generateWallet = async () => {
-  const wallet = Wallet.createRandom();
-  publicAddress.value = wallet.address;
-  isCreating.value = true;
-  await new Promise(() => {
-    setTimeout(() => {
-      isCreating.value = false;
-      emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
-    }, 3000);
-  });
-};
+
+const balanceDepositedAt = ref(new Date());
+const selectedToken = ref('sDAI');
+const options = [
+  { label: 'Savings DAI (sDAI) - a yield bearing crypto asset', value: 'sDAI' },
+];
+
+const currentBalance = ref(0);
+
+const title = computed(() => 'Fund Wallet');
 </script>
 <template>
   <n-collapse-item name="1">
     <template #header>
-      <n-icon><wallet-icon /></n-icon>&nbsp;
+      <n-icon><card-icon /></n-icon>&nbsp;
       <h4 class="font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-2">
-      <p>
-        In order to buy crypto, one has to have a private key which would hold
-        the tokens. Most customer-friendly apps would hold the key for you (and
-        therefore would have access to your tokens). Instead of it, here you can
-        have full ownership of your funds and not depend on our service to stay
-        online.
-      </p>
+      <div>
+        Fund the wallet by buying the selected crypto asset with your Euro
+        savings.
+      </div>
+      <div>
+        <span class="font-semibold">Tokens</span>
+        <n-select v-model:value="selectedToken" disabled :options="options" />
+      </div>
       <div class="flex w-full gap-x-2">
-        <n-button
-          :loading="isCreating"
-          :disabled="!!publicAddress"
-          @click="generateWallet"
-        >
-          Create new wallet
-        </n-button>
-        <n-button disabled>Use existing private key</n-button>
-        <n-button disabled>Restore from preseved</n-button>
+        <n-button type="primary">Buy {{ selectedToken }}</n-button>
+        <n-button disabled>Send {{ selectedToken }}</n-button>
       </div>
       <div class="flex gap-2">
-        <span>Wallet address: </span>
-        <div v-if="isCreating">
-          <n-spin size="small" class="mr-2" />Creating new wallet
-        </div>
-        <span v-else>{{ publicAddress ?? 'Not yet created' }}</span>
+        <span>Current balance: {{ currentBalance }} {{ selectedToken }}</span>
+        <span class="text-gray-500"
+          >(last updated at
+          {{ format(balanceDepositedAt, 'hh:mm dd.mm.yyyy') }})</span
+        >
       </div>
     </div>
   </n-collapse-item>

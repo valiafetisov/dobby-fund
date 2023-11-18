@@ -6,6 +6,10 @@ export default {
     './plugins/**/*.{js,ts}',
     './nuxt.config.{js,ts}',
   ],
+  corePlugins: {
+    // disabling preflight to manually add preflight style, else gives weird style overwriting. To get more information check out https://github.com/tailwindlabs/tailwindcss/issues/6602
+    preflight: false,
+  },
   theme: {
     extend: {
       colors: {

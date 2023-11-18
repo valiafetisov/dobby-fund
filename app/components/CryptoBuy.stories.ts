@@ -1,16 +1,16 @@
-import MyAccountSetup from './AccountSetup.vue';
+import MyCryptoBuy from './CryptoBuy.vue';
 import { NCollapse } from 'naive-ui';
 import { action } from '@storybook/addon-actions';
 
 export default {
-  title: '/MyAccountSetup',
-  component: MyAccountSetup,
+  title: '/CryptoBuy',
+  component: MyCryptoBuy,
 };
 
 export const Default = {
   render: () => ({
-    components: { MyAccountSetup, NCollapse },
+    components: { MyCryptoBuy, NCollapse },
     methods: { getCreatedWallet: action('get-created-wallet') },
-    template: `<n-collapse><MyAccountSetup @get-created-wallet="getCreatedWallet" /></n-collapse>`,
+    template: `<n-collapse><MyCryptoBuy @get-created-wallet="getCreatedWallet" /></n-collapse>`,
   }),
 };
