@@ -1,4 +1,4 @@
-SERVER := root@dobby.fund
+SERVER := root@app.dobby.fund
 FOLDER := ~/dobby
 
 default: upload server-start server-logs
