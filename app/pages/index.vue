@@ -23,7 +23,7 @@ const updateConfirmed = () => {
 <template>
   <div class="flex items-center justify-center">
     <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
-      <n-collapse arrow-placement="right" display-directive="show" d:expanded-names="collapseToExpand" accordion>
+      <n-collapse arrow-placement="right" display-directive="show" :expanded-names="collapseToExpand" accordion>
         <AccountSetup @get-created-wallet="getCreatedWallet" />
         <AccountArchival
           :accountGenerationDate="accountGenerationDate"
