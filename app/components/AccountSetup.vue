@@ -26,22 +26,18 @@ const generateWallet = async () => {
   const wallet = Wallet.createRandom();
   publicAddress.value = wallet.address;
   isCreating.value = true;
-
-  await new Promise(() => {
-    setTimeout(() => {
-      isCreating.value = false;
-    }, 3000);
-    emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
-  });
+  await new Promise(resolve => setTimeout(resolve, 1500))
+  isCreating.value = false;
+  emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
 };
 </script>
 <template>
   <n-collapse-item name="setup">
     <template #header>
-      <n-icon><wallet-icon /></n-icon>&nbsp;
-      <h4 class="font-semibold">{{ title }}</h4>
+      <n-icon><wallet-icon /></n-icon>
+      <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
-    <div class="flex flex-col gap-y-5 p-1">
+    <div class="flex flex-col gap-y-5 py-1">
       <p>
         In order to buy crypto, one has to have a private key which would hold
         the tokens. Most customer-friendly apps would hold the key for you (and
@@ -49,16 +45,18 @@ const generateWallet = async () => {
         have full ownership of your funds and not depend on our service to stay
         online.
       </p>
-      <div class="flex w-full gap-x-2">
+      <div class="flex w-full gap-x-5">
         <n-button
+          class="flex-1"
+          type="info"
           :loading="isCreating"
           :disabled="!!publicAddress"
           @click="generateWallet"
         >
           Create new wallet
         </n-button>
-        <n-button disabled>Use existing private key</n-button>
-        <n-button disabled>Restore from preseved</n-button>
+        <n-button class="flex-1" secondary disabled>Use existing private key</n-button>
+        <n-button class="flex-1" secondary disabled>Restore from preseved</n-button>
       </div>
       <div class="flex">
         <span>Wallet address:&nbsp;</span>

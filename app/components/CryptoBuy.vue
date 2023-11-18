@@ -62,29 +62,29 @@ watch(transactionStatus, (status) => {
 <template>
   <n-collapse-item name="1">
     <template #header>
-      <n-icon><card-icon /></n-icon>&nbsp;
-      <h4 class="font-semibold">{{ title }}</h4>
+      <n-icon><card-icon /></n-icon>
+      <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
-    <div class="flex flex-col gap-y-2">
+    <div class="flex flex-col gap-y-5 py-1">
       <div>
         Fund the wallet by buying the selected crypto asset with your Euro
         savings.
       </div>
       <div>
-        <span class="font-semibold">Tokens</span>
-        <n-select v-model:value="selectedToken" disabled :options="options" />
-      </div>
-      <div class="flex w-full gap-x-2">
+        <!-- <span class="font-semibold">Tokens</span> -->
+        <n-select v-model:value="selectedToken" :options="options" />
         <div id="modelButton" ref="modelButton" />
-        <n-button type="primary" @click="modalOpen">
-          Buy {{ selectedToken }}
-        </n-button>
-        <n-button disabled>Send {{ selectedToken }}</n-button>
       </div>
-      <div class="flex gap-2">
+      <div class="flex w-full gap-5">
+        <n-button class="flex-1" type="info" @click="modalOpen">
+          Buy {{ selectedToken }} with a credit card
+        </n-button>
+        <n-button class="flex-1" secondary disabled>Transfer {{ selectedToken }} from existing wallet</n-button>
+      </div>
+      <div>
         <span>Current balance: {{ currentBalance }} {{ selectedToken }}</span>
-        <span class="text-gray-500"
-          >(last updated at
+        <span class="text-gray-400"
+          >&nbsp;(last updated at
           {{ format(balanceDepositedAt, 'hh:mm dd.mm.yyyy') }})</span
         >
       </div>
