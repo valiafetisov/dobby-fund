@@ -2,20 +2,24 @@ const { expect } = require('chai');
 const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
 
 const tokenAddress = '0x83F20F44975D03b1b09e64809B757c47f942BEeA';
+const donationDestination = '0x53Dc0c92380cce50e0C3D9DF625478C3d4069bf3';
+const claimableWindow = 10 * 365 * 24 * 60 * 60;
 
 describe('Token contract', function () {
     async function deployProtocolFixture() {
         const DobbyFund = await ethers.getContractFactory('DobbyFund');
         const [deployer, addr1, addr2] = await ethers.getSigners();
-        const protocol = await DobbyFund.deploy(tokenAddress, 0);
+        const protocol = await DobbyFund.deploy(tokenAddress, donationDestination);
         await protocol.deployed();
         return { DobbyFund, protocol, deployer, addr1, addr2 };
     }
 
     describe('Deployment', function () {
         it('Should set the right token address', async function () {
-            const { protocol, deployer } = await loadFixture(deployProtocolFixture);
+            const { protocol } = await loadFixture(deployProtocolFixture);
             expect(await protocol.token()).to.equal(tokenAddress);
+            expect(await protocol.donationDestination()).to.equal(donationDestination);
+            expect(await protocol.claimableWindow()).to.equal(claimableWindow);
         });
 
         // it('Should assign the total supply of tokens to the owner', async function () {

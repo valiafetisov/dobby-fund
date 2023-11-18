@@ -15,7 +15,7 @@ contract DobbyFund {
     address public immutable donationDestination;
     
     // Time window in seconds in which tokens are claimable after the claimableDate
-    uint40 public immutable claimableWindow;
+    uint40 public constant claimableWindow = 10 * 365 days;
 
     // Deposits
     struct Deposit {
@@ -25,9 +25,9 @@ contract DobbyFund {
     mapping(address => Deposit[]) public deposits;
     event Deposited(address indexed receiver, uint40 indexed claimableDate, uint256 amount);
 
-    constructor(address token_, uint40 claimableWindow_) {
+    constructor(address token_, address donationDestination_) {
         token = ERC20(token_);
-        claimableWindow = claimableWindow_;
+        donationDestination = donationDestination_;
     }
 
     function deposit(address receiver, uint40 claimableDate, uint256 amount) external {
