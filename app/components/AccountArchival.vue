@@ -7,9 +7,15 @@ import { format } from 'date-fns'
 import { Buffer } from 'buffer'
 import { split } from 'shamirs-secret-sharing-ts'
 
+/**
+ * To resolve `Uncaught (in promise) ReferenceError: Buffer is not defined`
+ * source: https://stackoverflow.com/a/71953677
+ * @ts-ignore
+ */
+window.Buffer = Buffer
 const props = defineProps<{
   accountPrivateKey: string
-  accountGenerationDate: Date | undefined
+  accountGenerationDate: Date | null
 }>()
 
 const emits = defineEmits<{
@@ -22,7 +28,7 @@ const archivedPartsThreshold = ref(2)
 
 const generateDownloadParts = () => {
   if (!props.accountPrivateKey) {
-    return
+    return []
   }
 
   const sharedSecrets: ArrayBuffer[] = split(Buffer.from(props.accountPrivateKey), {
@@ -42,7 +48,7 @@ const generateDownloadParts = () => {
 
 const downloadParts: Ref<{ index: number; sharedSecret: string; downloadedAt: number | null }[] | undefined> = ref(generateDownloadParts())
 const currentIndexToGenerate: Ref<number | null> = ref(null)
-const isGenerating = ref(false)
+const isDownloading = ref(false)
 
 watch(
   [archivedPartsCount, archivedPartsThreshold],
@@ -53,8 +59,17 @@ watch(
   }
 )
 
+watch(
+  () => props.accountPrivateKey,
+  (newPrivateKey, oldPrivateKey) => {
+    if (newPrivateKey !== oldPrivateKey) {
+      downloadParts.value = generateDownloadParts()
+    }
+  }
+)
+
 const isConfirmed = computed(() => {
-  return downloadParts.value ? downloadParts.value.every(({ downloadedAt }) => downloadedAt !== null) : false
+  return downloadParts.value?.length ? downloadParts.value.every(({ downloadedAt }) => downloadedAt !== null) : false
 })
 
 watch(isConfirmed, isConfirmed => {
@@ -63,20 +78,22 @@ watch(isConfirmed, isConfirmed => {
 
 const title = computed(() => (isConfirmed.value ? `Wallet is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve wallet'))
 
-const generatePdf = async (index: number) => {
+const updateDownloadState = async (index: number) => {
   if (!downloadParts.value) {
     return
   }
+
   currentIndexToGenerate.value = index
-  isGenerating.value = true
+  isDownloading.value = true
+
   setTimeout(() => {
     if (!downloadParts.value) {
       return
     }
     currentIndexToGenerate.value = null
-    isGenerating.value = false
+    isDownloading.value = false
     downloadParts.value[index].downloadedAt = new Date().getTime()
-  }, 3000)
+  }, 750)
 }
 
 const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value], { type: 'text/plain' }))
@@ -95,25 +112,29 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
       <div class="flex w-full gap-x-5 justify-stretch flex-1">
         <div class="w-full">
           <span class="font-semibold">Number of parts: </span>
-          <n-input-number v-model:value="archivedPartsCount" :min="3" />
+          <n-input-number v-model:value="archivedPartsCount" :min="3" :disabled="!accountPrivateKey" />
         </div>
         <div class="w-full">
           <span class="font-semibold">Minimun number to restore: </span>
-          <n-input-number v-model:value="archivedPartsThreshold" :min="2" :max="archivedPartsCount" />
+          <n-input-number v-model:value="archivedPartsThreshold" :min="2" :max="archivedPartsCount" :disabled="!accountPrivateKey" />
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <div v-for="{ index, sharedSecret, downloadedAt } of downloadParts" :key="index" class="flex gap-x-2 items-center">
-          <a :href="generateTextFile(sharedSecret)" download>
+        <div v-for="{ index, sharedSecret, downloadedAt } of downloadParts" :key="index" class="flex gap-x-5 items-center">
+          <a :href="generateTextFile(sharedSecret)" download class="block flex-1">
             <n-button
-              :type="downloadedAt ? 'default' : 'primary'"
-              :loading="isGenerating && index === currentIndexToGenerate"
-              @click="generatePdf(index)"
+              class="w-full"
+              :type="downloadedAt ? 'default' : 'info'"
+              :secondary="!!downloadedAt"
+              :loading="isDownloading && index === currentIndexToGenerate"
+              @click="updateDownloadState(index)"
             >
               Download shared secret {{ index + 1 }} / {{ downloadParts ? downloadParts.length : 0 }}
             </n-button>
           </a>
-          <span v-if="downloadedAt" class="text-gray-400">Downloaded at {{ format(downloadedAt, 'hh:mm MM/dd/yyyy') }}</span>
+          <div class="text-gray-400 flex-1">
+            <span v-if="downloadedAt">Downloaded at {{ format(downloadedAt, 'HH:mm dd.MM.yyyy') }}</span>
+          </div>
         </div>
       </div>
     </div>

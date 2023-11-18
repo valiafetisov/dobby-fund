@@ -1,35 +1,34 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton, NSpin } from 'naive-ui';
-import { computed, ref } from 'vue';
-import type { Ref } from 'vue';
-import { Wallet as WalletIcon } from '@vicons/ionicons5';
-import { Wallet } from 'ethers';
+import { NCollapseItem, NIcon, NButton, NSpin } from 'naive-ui'
+import { computed, ref } from 'vue'
+import type { Ref } from 'vue'
+import { Wallet as WalletIcon } from '@vicons/ionicons5'
+import { Wallet } from 'ethers'
 
 const emits = defineEmits<{
-  (
-    e: 'getCreatedWallet',
-    accountAddress: string,
-    accountPrivateKey: string,
-    accountGenerationDate: Date
-  ): void;
-}>();
-const publicAddress: Ref<string | null> = ref(null);
-const isCreating = ref(false);
+  (e: 'getCreatedWallet', accountAddress: string, accountPrivateKey: string, accountGenerationDate: Date): void
+}>()
+const publicAddress: Ref<string | null> = ref(null)
+const isCreating = ref(false)
 
-const title = computed(() =>
-  publicAddress.value && !isCreating.value
-    ? `Created wallet ${publicAddress.value}`
-    : 'Create new or restore existing wallet'
-);
+const title = computed(() => {
+  if (isCreating.value) {
+    return 'Creating new wallet...'
+  }
+  if (publicAddress.value) {
+    return `Created wallet ${publicAddress.value}`
+  }
+  return 'Create new or restore existing wallet'
+})
 
 const generateWallet = async () => {
-  const wallet = Wallet.createRandom();
-  publicAddress.value = wallet.address;
-  isCreating.value = true;
+  const wallet = Wallet.createRandom()
+  publicAddress.value = wallet.address
+  isCreating.value = true
   await new Promise(resolve => setTimeout(resolve, 700))
-  isCreating.value = false;
-  emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date());
-};
+  isCreating.value = false
+  emits('getCreatedWallet', wallet.address, wallet.privateKey, new Date())
+}
 </script>
 <template>
   <n-collapse-item name="setup">
@@ -39,20 +38,12 @@ const generateWallet = async () => {
     </template>
     <div class="flex flex-col gap-y-5 py-1">
       <p>
-        In order to buy crypto, one has to have a private key which would hold
-        the tokens. Most customer-friendly apps would hold the key for you (and
-        therefore would have access to your tokens). Instead of it, here you can
-        have full ownership of your funds and not depend on our service to stay
-        online.
+        In order to buy crypto, one has to have a private key which would hold the tokens. Most customer-friendly apps would hold the key
+        for you (and therefore would have access to your tokens). Instead of it, here you can have full ownership of your funds and not
+        depend on our service to stay online.
       </p>
       <div class="flex w-full gap-x-5">
-        <n-button
-          class="flex-1"
-          type="info"
-          :loading="isCreating"
-          :disabled="!!publicAddress"
-          @click="generateWallet"
-        >
+        <n-button class="flex-1" type="info" :loading="isCreating" :disabled="!!publicAddress" @click="generateWallet">
           Create new wallet
         </n-button>
         <n-button class="flex-1" secondary disabled>Use existing private key</n-button>
@@ -60,9 +51,7 @@ const generateWallet = async () => {
       </div>
       <div class="flex">
         <span>Wallet address:&nbsp;</span>
-        <span v-if="isCreating" class="text-neutral-400">
-          Creating new wallet...
-        </span>
+        <span v-if="isCreating" class="text-neutral-400"> Creating new wallet... </span>
         <span v-else-if="!publicAddress" class="text-neutral-400">Not yet created</span>
         <span v-else>{{ publicAddress }}</span>
       </div>
