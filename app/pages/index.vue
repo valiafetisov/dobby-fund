@@ -11,6 +11,8 @@ const wasAccountArchived = ref(false)
 const accountBalance = ref(0n)
 const accountBalanceLastCheckedAt: Ref<Date | undefined> = ref()
 const provider = new JsonRpcProvider(config.public.rpcUrl)
+const archivedPartsCount = ref(3)
+const archivedPartsThreshold = ref(2)
 
 const checkBalance = async () => {
   if (!accountAddress.value) {
@@ -37,6 +39,11 @@ const updateConfirmed = (isConfirmed: boolean) => {
   }
   wasAccountArchived.value = isConfirmed
 }
+
+const generatedSecretParts = (numberOfParts: number, threshold: number) => {
+  archivedPartsCount.value = numberOfParts
+  archivedPartsThreshold.value = threshold
+}
 </script>
 
 <template>
@@ -49,6 +56,7 @@ const updateConfirmed = (isConfirmed: boolean) => {
           :accountPrivateKey="accountPrivateKey"
           :accountAddress="accountAddress"
           @updateConfirmed="updateConfirmed"
+          @generated="generatedSecretParts"
           @click="currentlySelectedStep = 'archive'"
         />
         <CryptoBuy
@@ -63,7 +71,15 @@ const updateConfirmed = (isConfirmed: boolean) => {
           :accountPrivateKey="accountPrivateKey"
           :accountBalance="accountBalance"
           @click="currentlySelectedStep = 'lock'"
-          @locked="currentlySelectedStep = 'setup'"
+          @locked="currentlySelectedStep = 'presentation'"
+        />
+        <AccountPresentation
+          :accountGenerationDate="accountGenerationDate"
+          :accountAddress="accountAddress"
+          :accountBalances="[{ chain: 'mainnet', balance: Number(accountBalance), lockedAt: undefined }]"
+          :archivedPartsCount="archivedPartsCount"
+          :archivedPartsThreshold="archivedPartsThreshold"
+          @click="currentlySelectedStep = 'presentation'"
         />
       </n-collapse>
     </div>
