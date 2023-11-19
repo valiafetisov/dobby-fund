@@ -17,7 +17,7 @@ const checkBalance = async () => {
     return
   }
   try {
-    accountBalance.value = await provider.getBalance(accountAddress.value);
+    accountBalance.value = await provider.getBalance(accountAddress.value)
     accountBalanceLastCheckedAt.value = new Date()
   } catch {}
 }
@@ -32,7 +32,9 @@ const getCreatedWallet = (address: string, privateKey: string, generationDate: D
 }
 
 const updateConfirmed = (isConfirmed: boolean) => {
-  currentlySelectedStep.value = 'buy'
+  if (isConfirmed) {
+    currentlySelectedStep.value = 'buy'
+  }
   wasAccountArchived.value = isConfirmed
 }
 </script>
@@ -41,10 +43,7 @@ const updateConfirmed = (isConfirmed: boolean) => {
   <div class="flex items-center justify-center">
     <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
       <n-collapse arrow-placement="right" display-directive="show" :expanded-names="currentlySelectedStep" accordion>
-        <AccountSetup
-          @get-created-wallet="getCreatedWallet"
-          @click="currentlySelectedStep = 'setup'"
-        />
+        <AccountSetup @get-created-wallet="getCreatedWallet" @click="currentlySelectedStep = 'setup'" />
         <AccountArchival
           :accountGenerationDate="accountGenerationDate"
           :accountPrivateKey="accountPrivateKey"
