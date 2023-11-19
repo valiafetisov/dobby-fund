@@ -41,7 +41,7 @@ const updateConfirmed = (isConfirmed: boolean) => {
 
 <template>
   <div class="flex items-center justify-center">
-    <div class="w-full max-w-screen-sm mt-32 border rounded border-neutral-300 p-4 bg-white">
+    <div class="w-full max-w-screen-sm mt-20 border rounded border-neutral-300 p-4 bg-white">
       <n-collapse arrow-placement="right" display-directive="show" :expanded-names="currentlySelectedStep" accordion>
         <AccountSetup @get-created-wallet="getCreatedWallet" @click="currentlySelectedStep = 'setup'" />
         <AccountArchival

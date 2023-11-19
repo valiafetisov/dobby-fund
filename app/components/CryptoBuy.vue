@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton } from 'naive-ui'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { computed } from 'vue'
-import { Card as CardIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { GateFiSDK } from '@gatefi/js-sdk'
 
 const props = defineProps<{
-  accountAddress?: string;
-  disabled: boolean;
-  accountBalance?: bigint;
-  accountBalanceLastCheckedAt?: Date;
+  accountAddress?: string
+  disabled: boolean
+  accountBalance?: bigint
+  accountBalanceLastCheckedAt?: Date
 }>()
 
 const emits = defineEmits<{
@@ -28,7 +27,7 @@ watch(
   }
 )
 
-const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance}` : 'Fund Wallet'))
+const title = computed(() => (props.accountBalance ? `Account funded with ${props.accountBalance}` : 'Fund account'))
 
 const modalOpen = () => {
   if ((window as any).overlayInstance) {
@@ -54,19 +53,21 @@ const modalOpen = () => {
 <template>
   <n-collapse-item name="buy">
     <template #header>
-      <n-icon><card-icon /></n-icon>
+      <img src="~/assets/icons/head-goldcoin.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
-      <div id="placeToAttach">Fund created wallet by exchanging EUR into volatile cryptocurrency called ETH.</div>
+      <div id="placeToAttach">Fund created account by exchanging EUR into volatile cryptocurrency called ETH.</div>
       <div class="flex w-full gap-5">
-        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled"> Buy ETH with a credit card </n-button>
+        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled">
+          Buy ETH with a credit card
+        </n-button>
         <n-button class="flex-1" secondary disabled>Transfer ETH from your existing wallet</n-button>
       </div>
       <div>
         <span
           >Current balance:
-          <span v-if="accountAddress">{{ (accountBalance ?? 0) }} ETH</span>
+          <span v-if="accountAddress">{{ accountBalance ?? 0 }} ETH</span>
           <span v-else class="text-neutral-400">Unknown</span>
         </span>
         <span class="text-gray-400" v-if="accountBalanceLastCheckedAt"

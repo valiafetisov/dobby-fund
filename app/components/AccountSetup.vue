@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton, NSpin } from 'naive-ui'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { computed, ref } from 'vue'
 import type { Ref } from 'vue'
-import { Wallet as WalletIcon } from '@vicons/ionicons5'
 import { Wallet } from 'ethers'
 
 const emits = defineEmits<{
@@ -13,12 +12,12 @@ const isCreating = ref(false)
 
 const title = computed(() => {
   if (isCreating.value) {
-    return 'Creating new wallet...'
+    return 'Creating new account...'
   }
   if (publicAddress.value) {
-    return `Created wallet ${publicAddress.value}`
+    return `Created account ${publicAddress.value}`
   }
-  return 'Create new or restore existing wallet'
+  return 'Create new or restore existing account'
 })
 
 const generateWallet = async () => {
@@ -33,7 +32,7 @@ const generateWallet = async () => {
 <template>
   <n-collapse-item name="setup">
     <template #header>
-      <n-icon><wallet-icon /></n-icon>
+      <img src="~/assets/icons/head-wallet.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
@@ -44,14 +43,14 @@ const generateWallet = async () => {
       </p>
       <div class="flex w-full gap-x-5">
         <n-button class="flex-1" type="info" :loading="isCreating" :disabled="!!publicAddress" @click="generateWallet">
-          Create new wallet
+          Create new account
         </n-button>
         <n-button class="flex-1" secondary disabled>Use existing private key</n-button>
         <n-button class="flex-1" secondary disabled>Restore from preseved</n-button>
       </div>
       <div class="flex">
-        <span>Wallet address:&nbsp;</span>
-        <span v-if="isCreating" class="text-neutral-400"> Creating new wallet... </span>
+        <span>Account address:&nbsp;</span>
+        <span v-if="isCreating" class="text-neutral-400"> Creating new account... </span>
         <span v-else-if="!publicAddress" class="text-neutral-400">Not yet created</span>
         <span v-else>{{ publicAddress }}</span>
       </div>
