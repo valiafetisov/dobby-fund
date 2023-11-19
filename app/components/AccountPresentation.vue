@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton } from 'naive-ui'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { ref, watch, watchEffect } from 'vue'
-import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { printCertificatePdf } from '../helpers/generatePdfs'
 import { jsPDF } from 'jspdf'
@@ -9,7 +8,7 @@ import { jsPDF } from 'jspdf'
 const props = defineProps<{
   archivedPartsCount?: number
   archivedPartsThreshold?: number
-  accountGenerationDate: Date | null
+  accountGenerationDate?: Date
   accountAddress?: string
   accountBalances?: { chain: string; balance: number; lockedAt: string | undefined }[]
 }>()
