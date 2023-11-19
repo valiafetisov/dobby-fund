@@ -17,7 +17,7 @@ const title = computed(() => {
   if (publicAddress.value) {
     return `Created account ${publicAddress.value}`
   }
-  return 'Create new or restore existing account'
+  return 'Create new savings account'
 })
 
 const generateWallet = async () => {
