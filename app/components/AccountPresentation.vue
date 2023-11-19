@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton } from 'naive-ui'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { ref, watch } from 'vue'
-import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 
 const props = defineProps<{

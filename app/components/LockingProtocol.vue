@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton } from 'naive-ui'
-import { LockClosed as LockIcon } from '@vicons/ionicons5'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { ref } from 'vue'
 import { add } from 'date-fns'
 import { JsonRpcProvider, Wallet, Contract } from 'ethers'

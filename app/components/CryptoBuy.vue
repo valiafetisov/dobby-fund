@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton } from 'naive-ui'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { computed } from 'vue'
-import { Card as CardIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { GateFiSDK } from '@gatefi/js-sdk'
 
 const props = defineProps<{
-  accountAddress?: string;
-  disabled: boolean;
-  accountBalance?: bigint;
-  accountBalanceLastCheckedAt?: Date;
+  accountAddress?: string
+  disabled: boolean
+  accountBalance?: bigint
+  accountBalanceLastCheckedAt?: Date
 }>()
 
 const emits = defineEmits<{
@@ -60,13 +59,15 @@ const modalOpen = () => {
     <div class="flex flex-col gap-y-5 py-1">
       <div id="placeToAttach">Fund created wallet by exchanging EUR into volatile cryptocurrency called ETH.</div>
       <div class="flex w-full gap-5">
-        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled"> Buy ETH with a credit card </n-button>
+        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled">
+          Buy ETH with a credit card
+        </n-button>
         <n-button class="flex-1" secondary disabled>Transfer ETH from your existing wallet</n-button>
       </div>
       <div>
         <span
           >Current balance:
-          <span v-if="accountAddress">{{ (accountBalance ?? 0) }} ETH</span>
+          <span v-if="accountAddress">{{ accountBalance ?? 0 }} ETH</span>
           <span v-else class="text-neutral-400">Unknown</span>
         </span>
         <span class="text-gray-400" v-if="accountBalanceLastCheckedAt"

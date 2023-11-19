@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NButton, NSpin } from 'naive-ui'
+import { NCollapseItem, NButton } from 'naive-ui'
 import { computed, ref } from 'vue'
 import type { Ref } from 'vue'
-import HeadWallet from '~/assets/icons/head-wallet.svg'
 import { Wallet } from 'ethers'
 
 const emits = defineEmits<{

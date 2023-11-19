@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NInputNumber, NButton } from 'naive-ui'
-import { computed, ref, watch, watchEffect } from 'vue'
+import { NCollapseItem, NInputNumber, NButton } from 'naive-ui'
+import { computed, ref, watch } from 'vue'
 import type { Ref } from 'vue'
-import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { Buffer } from 'buffer'
 import { split } from 'shamirs-secret-sharing-ts'
