@@ -118,7 +118,7 @@ const updateDownloadState = async (index: number) => {
     <div class="flex flex-col gap-y-5 py-1">
       <div>
         Create shared secrets to safely access your funds in the future. Specify the number of shared secrets and the minimum number of
-        secrets that will be required to regenerate your secret key.
+        secrets that will be required to reconstruct your account access.
       </div>
       <div class="flex w-full gap-x-5 justify-stretch flex-1">
         <div class="w-full">

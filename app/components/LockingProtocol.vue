@@ -32,13 +32,16 @@ const lockFunds = async () => {
       config.public.protocolAddress,
       [
         'function depositEth(address receiver, uint40 claimableDate) external payable returns (uint256)',
-        'function balanceOf(address account) external view returns (uint256)',
+        'function balanceOf(address account) external view returns (uint256)'
       ],
       signer
     )
     const ethBalance = await provider.getBalance(signer.address)
-    const approximateTransactionCost = 433948006075272n
-    const transaction = await protocol.depositEth(signer.address, deadlineUnixTimestamp, { value: ethBalance - approximateTransactionCost })
+    const gasEstimation = 434694n
+    const feeData = await provider.getFeeData()
+    const approximateTransactionCost = (feeData.maxPriorityFeePerGas || 1n) * gasEstimation * 2n
+    console.log('ethBalance - approximateTransactionCost', feeData, feeData.maxFeePerGas, ethBalance, approximateTransactionCost, ethBalance - approximateTransactionCost)
+    const transaction = await protocol.depositEth(signer.address, deadlineUnixTimestamp, { value: ethBalance - approximateTransactionCost, feeData })
     await transaction.wait(3)
     const balance = await protocol.balanceOf(signer.address)
     emits('locked', balance)
