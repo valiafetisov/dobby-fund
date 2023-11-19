@@ -64,16 +64,11 @@ watch(
 <template>
   <n-collapse-item name="presentation">
     <template #header>
-      <img src="~/assets/icons/head-crown.svg" class="w-6 h-6" />
+      <img src="~/assets/icons/head-crown.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">Print certificate</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec ullamcorper eros, sed tincidunt erat. Proin congue leo eget
-        lacinia suscipit. Duis felis lorem, molestie non nulla at, eleifend tristique justo. Nulla vitae libero eget est consectetur mattis
-        nec at nisi. Pellentesque hendrerit elementum ultricies. Nunc ac scelerisque nunc. Maecenas mattis blandit ante, vel tristique ipsum
-        semper vitae. Etiam at tincidunt est. Nullam ut enim pretium, pellentesque sapien ac, scelerisque nunc.
-      </div>
+      <div>Print your account certificate and keep it safe.</div>
       <div class="flex gap-2 items-center">
         <n-button
           :type="downloadedAt ? 'default' : 'primary'"
