@@ -10,8 +10,10 @@
       <slot />
     </div>
     <div class="h-5 flex justify-center">
-      Built for&nbsp;
-      <nuxt-link class="text-primary underline" to="https://ethglobal.com/events/istanbul" target="_blank">ETHGlobal Istanbul</nuxt-link>
+      <span class="mr-2">Built for</span>
+      <nuxt-link class="text-primary underline" to="https://ethglobal.com/events/istanbul" target="_blank"
+        >ETHGlobal Istanbul <img src="~/assets/icons/head-earth.svg" class="w-6 h-6 inline-block"
+      /></nuxt-link>
     </div>
   </div>
 </template>
