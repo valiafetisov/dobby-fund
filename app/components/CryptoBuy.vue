@@ -6,16 +6,29 @@ import { format } from 'date-fns'
 import { GateFiSDK } from '@gatefi/js-sdk'
 
 const props = defineProps<{
-  accountAddress: string | undefined
-  currentBalance: number | undefined
-  currentBalanceLastCheckedAt: Date | undefined
+  accountAddress?: string;
+  disabled: boolean;
+  accountBalance?: bigint;
+  accountBalanceLastCheckedAt?: Date;
 }>()
 
 const emits = defineEmits<{
-  (e: 'getCreatedWallet', accountAddress: string, accountPrivateKey: string, accountGenerationDate: Date): void
+  (e: 'funded'): void
 }>()
 
-const title = computed(() => (props.currentBalance ? `Wallet funded with ${props.currentBalance.toFixed(2)}` : 'Fund Wallet'))
+watch(
+  () => props.accountBalance,
+  (newAccountBalance, oldAccountBalance) => {
+    if (newAccountBalance && newAccountBalance !== oldAccountBalance && newAccountBalance > 0n) {
+      if ((window as any).overlayInstance) {
+        ;(window as any).overlayInstance.destroy()
+      }
+      emits('funded')
+    }
+  }
+)
+
+const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance}` : 'Fund Wallet'))
 
 const modalOpen = () => {
   if ((window as any).overlayInstance) {
@@ -47,17 +60,17 @@ const modalOpen = () => {
     <div class="flex flex-col gap-y-5 py-1">
       <div id="placeToAttach">Fund created wallet by exchanging EUR into volatile cryptocurrency called ETH.</div>
       <div class="flex w-full gap-5">
-        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress"> Buy ETH with a credit card </n-button>
+        <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled"> Buy ETH with a credit card </n-button>
         <n-button class="flex-1" secondary disabled>Transfer ETH from your existing wallet</n-button>
       </div>
       <div>
         <span
           >Current balance:
-          <span v-if="accountAddress">{{ (currentBalance ?? 0).toFixed(2) }} ETH</span>
+          <span v-if="accountAddress">{{ (accountBalance ?? 0) }} ETH</span>
           <span v-else class="text-neutral-400">Unknown</span>
         </span>
-        <span class="text-gray-400" v-if="currentBalanceLastCheckedAt"
-          >&nbsp;(last updated at {{ format(currentBalanceLastCheckedAt, 'HH:mm dd.MM.yyyy') }})</span
+        <span class="text-gray-400" v-if="accountBalanceLastCheckedAt"
+          >&nbsp;(last updated at {{ format(accountBalanceLastCheckedAt, 'HH:mm dd.MM.yyyy') }})</span
         >
       </div>
     </div>

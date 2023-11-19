@@ -8,5 +8,11 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@bg-dev/nuxt-naiveui'],
   vite: {
     define,
+  },
+  runtimeConfig: {
+    public: {
+      rpcUrl: process.env.NUXT_RPC_URL,
+      protocolAddress: process.env.NUXT_PROTOCOL_ADDRESS
+    }
   }
 })

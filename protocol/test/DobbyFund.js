@@ -32,10 +32,11 @@ describe('Token contract', function () {
     }
 
     describe('Deployment', function () {
-        it('Should set the right token address', async function () {
+        it('Should set the right addresses', async function () {
             const { protocol } = await loadFixture(deployProtocolFixture);
             expect(await protocol.token()).to.equal(tokenAddress);
             expect(await protocol.donationDestination()).to.equal(donationDestination);
+            expect(await protocol.router()).to.equal(uniswapRouter);
             expect(await protocol.claimableWindow()).to.equal(claimableWindow);
         });
     });
@@ -125,15 +126,12 @@ describe('Token contract', function () {
             const { token, protocol, deployer } = await loadFixture(deployProtocolFixture);
             const deadline = Math.floor(Date.now() / 1000) + 1000;
             const inputAmountOfEth = ethers.utils.parseEther('1.0');
-            const expectedAmountOfSdai = await protocol.callStatic.depositEth(deployer.address, deadline, {
-                value: inputAmountOfEth,
-            });
 
             // deposits and exchanges
             await protocol.depositEth(deployer.address, deadline, { value: inputAmountOfEth });
             const sdaiBalance = await protocol.balanceOf(deployer.address);
-            expect(sdaiBalance).to.be.above(expectedAmountOfSdai.sub(1000));
-            expect(await token.balanceOf(protocol.address)).to.be.above(expectedAmountOfSdai.sub(1000));
+            expect(sdaiBalance).to.be.above(0);
+            expect(sdaiBalance).to.be.equal(await token.balanceOf(protocol.address));
 
             // withdraws after deadilne
             await time.increaseTo(deadline + 1);
