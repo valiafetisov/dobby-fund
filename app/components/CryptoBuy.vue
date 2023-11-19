@@ -2,6 +2,7 @@
 import { NCollapseItem, NButton } from 'naive-ui'
 import { computed } from 'vue'
 import { format } from 'date-fns'
+import { formatEther } from 'ethers'
 import { GateFiSDK } from '@gatefi/js-sdk'
 
 const props = defineProps<{
@@ -27,7 +28,7 @@ watch(
   }
 )
 
-const title = computed(() => (props.accountBalance ? `Account funded with ${props.accountBalance}` : 'Fund account'))
+const title = computed(() => (props.accountBalance ? `Account funded with ${formatEther(props.accountBalance ?? 0)}` : 'Fund account'))
 
 const modalOpen = () => {
   if ((window as any).overlayInstance) {
@@ -67,7 +68,7 @@ const modalOpen = () => {
       <div>
         <span
           >Current balance:
-          <span v-if="accountAddress">{{ accountBalance ?? 0 }} ETH</span>
+          <span v-if="accountAddress">{{ formatEther(accountBalance ?? 0) }} ETH</span>
           <span v-else class="text-neutral-400">Unknown</span>
         </span>
         <span class="text-gray-400" v-if="accountBalanceLastCheckedAt"
