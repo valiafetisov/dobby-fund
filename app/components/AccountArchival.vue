@@ -75,7 +75,7 @@ watch(isConfirmed, isConfirmed => {
   emits('updateConfirmed', isConfirmed)
 })
 
-const title = computed(() => (isConfirmed.value ? `Wallet is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve wallet'))
+const title = computed(() => (isConfirmed.value ? `Account is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve account'))
 
 const updateDownloadState = async (index: number) => {
   if (!downloadParts.value) {

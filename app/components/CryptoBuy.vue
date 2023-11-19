@@ -27,7 +27,7 @@ watch(
   }
 )
 
-const title = computed(() => (props.accountBalance ? `Wallet funded with ${props.accountBalance}` : 'Fund Wallet'))
+const title = computed(() => (props.accountBalance ? `Account funded with ${props.accountBalance}` : 'Fund account'))
 
 const modalOpen = () => {
   if ((window as any).overlayInstance) {
@@ -57,7 +57,7 @@ const modalOpen = () => {
       <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
-      <div id="placeToAttach">Fund created wallet by exchanging EUR into volatile cryptocurrency called ETH.</div>
+      <div id="placeToAttach">Fund created account by exchanging EUR into volatile cryptocurrency called ETH.</div>
       <div class="flex w-full gap-5">
         <n-button class="flex-1" type="info" @click="modalOpen" :disabled="!accountAddress || disabled">
           Buy ETH with a credit card

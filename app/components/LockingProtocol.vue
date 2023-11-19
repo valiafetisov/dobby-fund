@@ -63,7 +63,12 @@ const lockFunds = async () => {
         unlock date, they will be donated to a public goods organisation.
       </p>
       <div class="flex flex-col w-full gap-5">
-        <n-date-picker v-model:value="selectedDate" :disabled="isLocking" type="date" class="w-full" />
+        <n-date-picker
+          v-model:value="selectedDate"
+          :disabled="isLocking || !accountPrivateKey || accountBalance === 0n"
+          type="date"
+          class="w-full"
+        />
         <n-button type="info" :loading="isLocking" @click="lockFunds" :disabled="!accountPrivateKey || accountBalance === 0n">
           Lock funds
         </n-button>
