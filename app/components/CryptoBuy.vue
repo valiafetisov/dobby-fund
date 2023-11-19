@@ -53,7 +53,7 @@ const modalOpen = () => {
 <template>
   <n-collapse-item name="buy">
     <template #header>
-      <img src="~/assets/icons/head-goldcoin.svg" class="w-6 h-6" />
+      <img src="~/assets/icons/head-goldcoin.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">

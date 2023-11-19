@@ -53,7 +53,7 @@ const lockFunds = async () => {
 <template>
   <n-collapse-item name="lock">
     <template #header>
-      <img src="~/assets/icons/head-lock.svg" class="w-6 h-6" />
+      <img src="~/assets/icons/head-lock.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">Lock funds</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">

@@ -100,7 +100,7 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
 <template>
   <n-collapse-item name="archive">
     <template #header>
-      <img src="~/assets/icons/head-owl.svg" class="w-6 h-6" />
+      <img src="~/assets/icons/head-owl.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
