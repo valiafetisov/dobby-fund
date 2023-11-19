@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" shape-rendering="crispEdges">
+  <rect width="100%" height="100%" fill="none"/>
+  <path fill="#62616d" d="M120 30h80v10h-80zM110 40h100v10H110zM100 50h30v10h-30zM190 50h30v10h-30zM100 60h20v10h-20zM200 60h20v10h-20zM100 70h10v10h-10z"/>
+  <path fill="#343235" d="M110 70h10v10h-10z"/>
+  <path fill="#62616d" d="M200 70h10v10h-10z"/>
+  <path fill="#343235" d="M210 70h10v10h-10zM100 80h20v10h-20zM200 80h20v10h-20z"/>
+  <path fill="#74580d" d="M80 90h160v10H80z"/>
+  <path fill="#d08b11" d="M80 100h160v10H80zM80 110h160v10H80zM80 120h160v10H80zM80 130h160v10H80zM80 140h160v10H80zM80 150h160v10H80zM80 160h160v10H80zM80 170h10v10H80z"/>
+  <path fill="#ffe939" d="M90 170h20v10H90z"/>
+  <path fill="#d08b11" d="M110 170h100v10H110z"/>
+  <path fill="#ffe939" d="M210 170h20v10h-20z"/>
+  <path fill="#d08b11" d="M230 170h10v10h-10zM80 180h10v10H80z"/>
+  <path fill="#ffe939" d="M90 180h20v10H90z"/>
+  <path fill="#d08b11" d="M110 180h40v10h-40z"/>
+  <path d="M150 180h20v10h-20z"/>
+  <path fill="#d08b11" d="M170 180h40v10h-40z"/>
+  <path fill="#ffe939" d="M210 180h20v10h-20z"/>
+  <path fill="#d08b11" d="M230 180h10v10h-10zM80 190h70v10H80z"/>
+  <path d="M150 190h20v10h-20z"/>
+  <path fill="#d08b11" d="M170 190h70v10h-70zM80 200h160v10H80z"/>
+</svg>

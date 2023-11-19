@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" viewBox="0 0 320 320">
+  <rect width="100%" height="100%" fill="none"/>
+  <path fill="#903707" d="M150 20h40v10h-40zM150 30h60v10h-60zM140 40h30v10h-30z"/>
+  <path fill="#db8323" d="M170 40h10v10h-10z"/>
+  <path fill="#903707" d="M180 40h10v10h-10z"/>
+  <path fill="#db8323" d="M190 40h10v10h-10z"/>
+  <path fill="#903707" d="M200 40h10v10h-10zM140 50h20v10h-20z"/>
+  <path fill="#db8323" d="M160 50h10v10h-10z"/>
+  <path fill="#552e05" d="M170 50h10v10h-10z"/>
+  <path fill="#db8323" d="M180 50h10v10h-10z"/>
+  <path fill="#552e05" d="M190 50h10v10h-10z"/>
+  <path fill="#903707" d="M200 50h10v10h-10zM140 60h20v10h-20z"/>
+  <path fill="#c16710" d="M160 60h20v10h-20z"/>
+  <path fill="#db8323" d="M180 60h10v10h-10z"/>
+  <path fill="#c16710" d="M190 60h10v10h-10z"/>
+  <path fill="#903707" d="M200 60h10v10h-10zM110 70h50v10h-50z"/>
+  <path fill="#c16710" d="M160 70h10v10h-10z"/>
+  <path fill="#db8323" d="M170 70h10v10h-10z"/>
+  <path fill="#552e05" d="M180 70h10v10h-10z"/>
+  <path fill="#db8323" d="M190 70h10v10h-10z"/>
+  <path fill="#903707" d="M200 70h10v10h-10zM100 80h110v10H100zM90 90h110v10H90zM80 100h130v10H80zM70 110h140v10H70z"/>
+  <path fill="#552e05" d="M210 110h10v10h-10z"/>
+  <path fill="#903707" d="M60 120h40v10H60zM110 120h100v10H110z"/>
+  <path fill="#552e05" d="M210 120h30v10h-30z"/>
+  <path fill="#903707" d="M50 130h40v10H50zM110 130h100v10H110z"/>
+  <path fill="#552e05" d="M210 130h50v10h-50z"/>
+  <path fill="#903707" d="M40 140h40v10H40zM100 140h110v10H100z"/>
+  <path fill="#552e05" d="M210 140h70v10h-70z"/>
+  <path fill="#903707" d="M20 150h40v10H20zM90 150h120v10H90z"/>
+  <path fill="#552e05" d="M240 150h50v10h-50z"/>
+  <path fill="#903707" d="M20 160h30v10H20zM90 160h120v10H90z"/>
+  <path fill="#552e05" d="M250 160h10v10h-10zM270 160h10v10h-10z"/>
+  <path fill="#903707" d="M90 170h110v10H90zM90 180h80v10H90z"/>
+  <path fill="#fd8b5b" d="M170 180h20v10h-20z"/>
+  <path fill="#903707" d="M190 180h20v10h-20z"/>
+  <path fill="#552e05" d="M100 190h20v10h-20z"/>
+  <path fill="#903707" d="M120 190h100v10H120z"/>
+  <path fill="#552e05" d="M90 200h60v10H90z"/>
+  <path fill="#903707" d="M150 200h80v10h-80z"/>
+</svg>

@@ -36,7 +36,7 @@ watch(
 <template>
   <n-collapse-item name="1">
     <template #header>
-      <n-icon><print-icon /></n-icon>
+      <img src="~/assets/icons/head-crown.svg" class="w-6 h-6" />
       <h4 class="ml-2 font-semibold">Print certificate</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
