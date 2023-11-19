@@ -1,9 +1,7 @@
 require('dotenv/config');
 require('@nomicfoundation/hardhat-toolbox');
 
-const RPC_URL = process.env.RPC_URL;
-
-if (!RPC_URL) {
+if (!process.env.RPC_URL) {
     throw new Error('RPC_URL env variable not set, please check your `.env` file');
 }
 
@@ -15,9 +13,16 @@ module.exports = {
             chainId: 1337,
             blockNumber: 18596917,
             forking: {
-                url: RPC_URL,
+                url: process.env.RPC_URL,
             },
             initialBaseFeePerGas: 1,
         },
+        goerli: {
+            url: process.env.RPC_URL,
+            accounts: [process.env.PRIVATE_KEY],
+        },
+    },
+    etherscan: {
+        apiKey: process.env.ETHERSCAN_API_KEY,
     },
 };

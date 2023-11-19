@@ -18,9 +18,11 @@ const themeConfig: ThemeConfig = {
 <template>
   <naive-config :theme-config="themeConfig" class="bg-neutral-100">
     <NNotificationProvider placement="top">
-      <NuxtLayout name="default">
-        <NuxtPage />
-      </NuxtLayout>
+      <n-message-provider>
+        <NuxtLayout name="default">
+          <NuxtPage />
+        </NuxtLayout>
+      </n-message-provider>
     </NNotificationProvider>
   </naive-config>
 </template>

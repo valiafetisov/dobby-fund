@@ -18,7 +18,7 @@ window.Buffer = Buffer
 const props = defineProps<{
   accountAddress?: string
   accountPrivateKey?: string
-  accountGenerationDate: Date | null
+  accountGenerationDate?: Date
 }>()
 
 const emits = defineEmits<{
@@ -29,11 +29,11 @@ const emits = defineEmits<{
 const archivedPartsCount = ref(3)
 const archivedPartsThreshold = ref(2)
 
-const generatePDFs = () => {
+const generatePDFs = async () => {
   if (!(props.accountPrivateKey && props.accountAddress && props.accountGenerationDate)) {
     return []
   }
-
+  isGenerating.value = true
   const sharedSecrets: string[] = split(Buffer.from(props.accountPrivateKey), {
     shares: archivedPartsCount.value,
     threshold: archivedPartsThreshold.value,
@@ -52,6 +52,9 @@ const generatePDFs = () => {
     downloadedAt: null,
   }))
 
+  await new Promise(resolve => setTimeout(resolve, 700))
+
+  isGenerating.value = false
   emits('generated', archivedPartsCount.value, archivedPartsThreshold.value)
   return pdfsWithDownloadedAt
 }
@@ -59,21 +62,22 @@ const generatePDFs = () => {
 const generatedPdfs = ref<{ pdf: jsPDF; downloadedAt: number | null }[]>([])
 const currentIndexToGenerate: Ref<number | null> = ref(null)
 const isDownloading = ref(false)
+const isGenerating = ref(false)
 
 watch(
   [archivedPartsCount, archivedPartsThreshold],
-  ([newArchivedPartsCount, oldArchivedPartsCount], [newArchivedPartsThreshold, oldArchivedPartsThreshold]) => {
+  async ([newArchivedPartsCount, oldArchivedPartsCount], [newArchivedPartsThreshold, oldArchivedPartsThreshold]) => {
     if (newArchivedPartsCount !== oldArchivedPartsCount || newArchivedPartsThreshold !== oldArchivedPartsThreshold) {
-      generatedPdfs.value = generatePDFs()
+      generatedPdfs.value = await generatePDFs()
     }
   }
 )
 
 watch(
   () => props.accountPrivateKey,
-  (newPrivateKey, oldPrivateKey) => {
+  async (newPrivateKey, oldPrivateKey) => {
     if (newPrivateKey !== oldPrivateKey) {
-      generatedPdfs.value = generatePDFs()
+      generatedPdfs.value = await generatePDFs()
     }
   }
 )
@@ -128,12 +132,20 @@ const updateDownloadState = async (index: number) => {
         </div>
       </div>
       <div class="flex flex-col gap-2">
+        <div v-if="!generatedPdfs?.length" class="flex flex-col gap-2">
+          <div v-for="index in archivedPartsCount" :key="`${index}-archivedPartsCount`" class="flex gap-x-12">
+            <n-button type="info" disabled class="flex-1 flex-shrink-0">
+              Download shared secret {{ index }} / {{ archivedPartsCount }}
+            </n-button>
+            <div class="flex-1 flex-shrink-0"></div>
+          </div>
+        </div>
         <div v-for="({ downloadedAt }, index) of generatedPdfs" :key="index" class="flex gap-x-5 items-center">
           <n-button
             class="w-full flex-1"
             :type="downloadedAt ? 'default' : 'info'"
             :secondary="!!downloadedAt"
-            :loading="isDownloading && index === currentIndexToGenerate"
+            :loading="isGenerating || (isDownloading && index === currentIndexToGenerate)"
             @click="updateDownloadState(index)"
           >
             Download shared secret {{ index + 1 }} / {{ generatedPdfs ? generatedPdfs.length : 0 }}
