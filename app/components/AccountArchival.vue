@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { NCollapseItem, NIcon, NInputNumber, NButton } from 'naive-ui'
-import { computed, ref, watch, watchEffect } from 'vue'
+import { NCollapseItem, NInputNumber, NButton } from 'naive-ui'
+import { computed, ref, watch } from 'vue'
 import type { Ref } from 'vue'
-import { Print as PrintIcon } from '@vicons/ionicons5'
 import { format } from 'date-fns'
 import { Buffer } from 'buffer'
 import { split } from 'shamirs-secret-sharing-ts'
@@ -76,7 +75,7 @@ watch(isConfirmed, isConfirmed => {
   emits('updateConfirmed', isConfirmed)
 })
 
-const title = computed(() => (isConfirmed.value ? `Wallet is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve wallet'))
+const title = computed(() => (isConfirmed.value ? `Account is preserved via ${archivedPartsCount.value} shared secrets` : 'Preserve account'))
 
 const updateDownloadState = async (index: number) => {
   if (!downloadParts.value) {
@@ -101,7 +100,7 @@ const generateTextFile = (value: string) => URL.createObjectURL(new Blob([value]
 <template>
   <n-collapse-item name="archive">
     <template #header>
-      <n-icon><print-icon /></n-icon>
+      <img src="~/assets/icons/head-owl.svg" class="w-6 h-6 mt-1" />
       <h4 class="ml-2 font-semibold">{{ title }}</h4>
     </template>
     <div class="flex flex-col gap-y-5 py-1">
