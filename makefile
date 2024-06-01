@@ -1,13 +1,16 @@
-SERVER := root@app.dobby.fund
-FOLDER := ~/dobby
+SERVER := root@dobby.fund
+FOLDER := /opt/dobby-fund-static
 
-default: upload server-start server-logs
+default: build-static upload-static upload-nginx restart-nginx
 
-upload:
-	rsync -av . '$(SERVER):$(FOLDER)' --exclude='.git' --exclude='node_modules' --exclude='.output' --exclude='.nuxt' --delete
+build-static:
+	(cd app && npm run generate)
 
-server-start:
-	ssh $(SERVER) 'cd $(FOLDER) && docker compose up --build --force-recreate -d'
+upload-static:
+	rsync -av ./app/.output/public/ '$(SERVER):$(FOLDER)' --delete
 
-server-logs:
-	ssh $(SERVER) 'cd $(FOLDER) && docker compose logs -f'
+upload-nginx:
+	rsync -av ./nginx-static.conf '$(SERVER):/etc/nginx/sites-enabled/dobby-fund-static.conf'
+
+restart-nginx:
+	ssh $(SERVER) 'service nginx restart'
